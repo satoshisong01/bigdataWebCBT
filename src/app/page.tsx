@@ -1,65 +1,157 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { SESSIONS } from '@/data';
+import { SUBJECTS } from '@/data/subjects';
+import { getHistory, ExamRecord } from '@/lib/storage';
+
+export default function HomePage() {
+  const [history, setHistory] = useState<ExamRecord[]>([]);
+
+  useEffect(() => {
+    setHistory(getHistory());
+  }, []);
+
+  const getRecord = (key: string) => history.find(r => r.key === key);
+
+  const totalQuestions = SESSIONS.reduce((sum, s) => sum + s.questionCount, 0);
+  const completedCount = history.length;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-5xl mx-auto px-6 py-16 text-center">
+          <h1 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">
+            빅데이터분석기사 필기 CBT
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+          <p className="text-gray-500 mt-3 text-lg">기출문제 풀이 및 해설</p>
+          <div className="flex justify-center gap-8 mt-6 text-sm text-gray-400">
+            <span>{SESSIONS.length}회차</span>
+            <span>4과목</span>
+            <span>총 {totalQuestions}문항</span>
+          </div>
+          {completedCount > 0 && (
+            <div className="mt-4 inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 text-blue-700 text-sm font-medium rounded-full">
+              {completedCount}개 완료
+            </div>
+          )}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </div>
+
+      <div className="max-w-5xl mx-auto px-6 py-10 space-y-12">
+        {/* 회차별 풀기 */}
+        <section>
+          <h2 className="text-xl font-bold text-gray-800 mb-4">회차별 풀기</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {SESSIONS.map(session => {
+              const record = getRecord(`session-${session.id}`);
+              return (
+                <Link
+                  key={session.id}
+                  href={`/exam?mode=session&id=${session.id}`}
+                  className={`block p-6 bg-white rounded-xl border transition group relative ${
+                    record
+                      ? 'border-green-300 hover:border-green-400 hover:shadow-md'
+                      : 'border-gray-200 hover:border-blue-400 hover:shadow-md'
+                  }`}
+                >
+                  {record && (
+                    <div className="absolute top-3 right-3 flex items-center gap-1.5">
+                      <span
+                        className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                          record.passed
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-red-100 text-red-700'
+                        }`}
+                      >
+                        {record.score}점
+                      </span>
+                    </div>
+                  )}
+                  <div className="text-lg font-bold text-gray-800 group-hover:text-blue-600 transition">
+                    {session.name}
+                  </div>
+                  <div className="text-sm text-gray-400 mt-1">
+                    {session.questionCount}문항 &middot; 120분
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* 과목별 풀기 */}
+        <section>
+          <h2 className="text-xl font-bold text-gray-800 mb-4">과목별 풀기</h2>
+          <div className="space-y-4">
+            {SUBJECTS.map(subject => (
+              <div
+                key={subject.id}
+                className="bg-white rounded-xl border border-gray-200 p-5"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-sm text-blue-600 font-bold">{subject.id}과목</span>
+                  <span className="text-base font-bold text-gray-800">
+                    {subject.name}
+                  </span>
+                  <span className="text-xs text-gray-400">회차당 20문항</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {SESSIONS.map(session => {
+                    const record = getRecord(`subject-${subject.id}-${session.id}`);
+                    return (
+                      <Link
+                        key={session.id}
+                        href={`/exam?mode=subject&id=${subject.id}&session=${session.id}`}
+                        className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition ${
+                          record
+                            ? 'bg-green-50 text-green-700 border border-green-200 hover:bg-green-100'
+                            : 'bg-gray-50 text-gray-700 border border-gray-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200'
+                        }`}
+                      >
+                        {session.name}
+                        {record && (
+                          <span className="text-xs opacity-75">{record.score}점</span>
+                        )}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 안내 */}
+        <section className="bg-white p-6 rounded-xl border border-gray-200">
+          <h3 className="font-bold text-gray-800 mb-3">시험 안내</h3>
+          <div className="text-sm text-gray-500 space-y-1.5">
+            <p>- 시험 시간: 120분 (80문항, 4과목)</p>
+            <p>- 합격 기준: 전 과목 평균 60점 이상, 과목당 40점 이상</p>
+            <p>- 풀이 중 해설 확인 가능 (학습 모드)</p>
+            <p>- 키보드 지원: 1~4번으로 답변, 좌우 화살표로 이동</p>
+            <p>- 풀이 기록은 브라우저에 자동 저장됩니다</p>
+          </div>
+        </section>
+
+        {/* 기록 초기화 */}
+        {completedCount > 0 && (
+          <div className="text-center">
+            <button
+              onClick={() => {
+                if (confirm('모든 풀이 기록을 초기화하시겠습니까?')) {
+                  localStorage.removeItem('bigdata-cbt-history');
+                  setHistory([]);
+                }
+              }}
+              className="text-sm text-gray-400 hover:text-red-500 transition"
+            >
+              풀이 기록 초기화
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
