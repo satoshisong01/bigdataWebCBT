@@ -11,6 +11,7 @@ interface QuestionNavProps {
   isSubmitted: boolean;
   correctAnswers?: Readonly<Record<string, boolean>>;
   checkedAnswers?: Readonly<Record<string, boolean>>;
+  passedIds?: ReadonlySet<string>;
 }
 
 export default function QuestionNav({
@@ -21,6 +22,7 @@ export default function QuestionNav({
   isSubmitted,
   correctAnswers,
   checkedAnswers,
+  passedIds,
 }: QuestionNavProps) {
   const groups = useMemo(() => {
     const map = new Map<number, { name: string; indices: number[] }>();
@@ -47,6 +49,11 @@ export default function QuestionNav({
       if (isCorrect) return 'bg-green-100 text-green-800 border-green-300';
       if (isAnswered) return 'bg-red-100 text-red-800 border-red-300';
       return 'bg-gray-100 text-gray-400 border-gray-200';
+    }
+
+    if (passedIds?.has(qId)) {
+      if (isCurrent) return 'bg-yellow-500 text-white ring-2 ring-yellow-300';
+      return 'bg-yellow-100 text-yellow-800 border-yellow-300';
     }
 
     if (checkedAnswers && checkedAnswers[qId] !== undefined) {

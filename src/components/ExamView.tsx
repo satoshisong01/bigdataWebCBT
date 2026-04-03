@@ -383,6 +383,7 @@ export default function ExamView() {
             isSubmitted={phase === 'review'}
             correctAnswers={correctAnswers}
             checkedAnswers={checkedAnswersMap}
+            passedIds={passedQuestions}
           />
         </aside>
 
@@ -577,6 +578,10 @@ export default function ExamView() {
                 : isAnswered
                   ? 'bg-red-100 text-red-800'
                   : 'bg-gray-100 text-gray-400';
+            } else if (passedQuestions.has(q.id)) {
+              cls = isCurrent
+                ? 'bg-yellow-500 text-white'
+                : 'bg-yellow-100 text-yellow-800';
             } else if (checkedAnswersMap && checkedAnswersMap[q.id] !== undefined) {
               if (isCurrent) {
                 cls = checkedAnswersMap[q.id]
