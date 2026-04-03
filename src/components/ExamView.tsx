@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Question, ExamResult } from '@/types';
 import { calculateResult } from '@/lib/utils';
 import { getQuestionsBySession, getQuestionsBySubject, getQuestionsBySubjectAndSession, getQuestionsByIds, getAllQuestions } from '@/data';
-import { saveRecord, saveWrongIds, getWrongIds } from '@/lib/storage';
+import { saveRecord, saveWrongIds, getWrongIds, saveExamAnswers, getExamAnswers, clearExamAnswers } from '@/lib/storage';
 import QuestionCard from './QuestionCard';
 import ExamHeader from './ExamHeader';
 import QuestionNav from './QuestionNav';
@@ -36,14 +36,19 @@ export default function ExamView() {
   const submitRef = useRef<(() => void) | undefined>(undefined);
 
   useEffect(() => {
-    if (wrongOf) {
-      const ids = getWrongIds(wrongOf);
-      setQuestions(getQuestionsByIds(ids));
-      return;
-    }
+    // Reset all exam state
+    setCurrentIndex(0);
+    setPhase('exam');
+    setShownExplanations(new Set());
+    setCheckedQuestions(new Set());
+    setTimeElapsed(0);
+    setResult(null);
 
     let loaded: Question[] = [];
-    if (mode === 'session') {
+    if (wrongOf) {
+      const ids = getWrongIds(wrongOf);
+      loaded = getQuestionsByIds(ids);
+    } else if (mode === 'session') {
       loaded = getQuestionsBySession(id);
     } else if (mode === 'subject') {
       if (sessionParam) {
@@ -55,6 +60,15 @@ export default function ExamView() {
       loaded = getAllQuestions();
     }
     setQuestions(loaded);
+
+    // Restore saved answers if available
+    let key: string;
+    if (wrongOf) key = wrongOf;
+    else if (mode === 'session') key = `session-${id}`;
+    else if (mode === 'subject' && sessionParam) key = `subject-${id}-${sessionParam}`;
+    else key = 'all';
+    const saved = getExamAnswers(key);
+    setAnswers(saved ?? {});
   }, [mode, id, sessionParam, wrongOf]);
 
   const examKey = useMemo(() => {
@@ -81,6 +95,7 @@ export default function ExamView() {
       .filter(q => answers[q.id] !== q.answer)
       .map(q => q.id);
     saveWrongIds(examKey, wrongIds);
+    saveExamAnswers(examKey, answers);
   }, [questions, answers, timeElapsed, examKey]);
 
   submitRef.current = doSubmit;
@@ -146,7 +161,11 @@ export default function ExamView() {
     if (!q || answers[q.id] === undefined) return;
 
     if (checkedQuestions.has(q.id)) {
-      setCurrentIndex(prev => Math.min(questions.length - 1, prev + 1));
+      if (currentIndex === questions.length - 1) {
+        doSubmit();
+      } else {
+        setCurrentIndex(prev => Math.min(questions.length - 1, prev + 1));
+      }
     } else {
       setCheckedQuestions(prev => {
         const next = new Set(prev);
@@ -154,7 +173,7 @@ export default function ExamView() {
         return next;
       });
     }
-  }, [questions, currentIndex, answers, checkedQuestions]);
+  }, [questions, currentIndex, answers, checkedQuestions, doSubmit]);
 
   const { checkedCorrect, checkedWrong } = useMemo(() => {
     let correct = 0;
@@ -236,6 +255,30 @@ export default function ExamView() {
     ? result.totalQuestions - result.correctCount
     : 0;
 
+  const handleRetry = useCallback(() => {
+    clearExamAnswers(examKey);
+    setQuestions(prev => [...prev]);
+    setAnswers({});
+    setCurrentIndex(0);
+    setPhase('exam');
+    setShownExplanations(new Set());
+    setCheckedQuestions(new Set());
+    setTimeElapsed(0);
+    setResult(null);
+  }, [examKey]);
+
+  const handleRetryWrong = useCallback(() => {
+    const wrongQs = questions.filter(q => answers[q.id] !== q.answer);
+    setQuestions(wrongQs);
+    setAnswers({});
+    setCurrentIndex(0);
+    setPhase('exam');
+    setShownExplanations(new Set());
+    setCheckedQuestions(new Set());
+    setTimeElapsed(0);
+    setResult(null);
+  }, [questions, answers]);
+
   if (questions.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 gap-4">
@@ -259,8 +302,8 @@ export default function ExamView() {
           setCurrentIndex(0);
           setPhase('review');
         }}
-        onRetry={() => router.push(currentUrl)}
-        onRetryWrong={() => router.push(`/exam?wrong=${encodeURIComponent(examKey)}`)}
+        onRetry={handleRetry}
+        onRetryWrong={handleRetryWrong}
         onHome={() => router.push('/')}
       />
     );
@@ -347,25 +390,38 @@ export default function ExamView() {
                       disabled={answers[currentQuestion.id] === undefined}
                       className={`px-4 py-2 rounded-lg font-bold text-sm transition ${
                         checkedQuestions.has(currentQuestion.id)
-                          ? 'bg-green-600 text-white hover:bg-green-700'
+                          ? currentIndex === questions.length - 1
+                            ? 'bg-red-500 text-white hover:bg-red-600'
+                            : 'bg-green-600 text-white hover:bg-green-700'
                           : 'bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-40 disabled:cursor-not-allowed'
                       }`}
                     >
-                      {checkedQuestions.has(currentQuestion.id) ? '다음 문제 →' : '확인'}
+                      {checkedQuestions.has(currentQuestion.id)
+                        ? currentIndex === questions.length - 1 ? '제출' : '다음 문제 →'
+                        : '확인'}
                     </button>
                   </>
                 )}
               </div>
 
-              <button
-                onClick={() =>
-                  setCurrentIndex(prev => Math.min(questions.length - 1, prev + 1))
-                }
-                disabled={currentIndex === questions.length - 1}
-                className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
-              >
-                다음 &rarr;
-              </button>
+              {phase === 'exam' && currentIndex === questions.length - 1 ? (
+                <button
+                  onClick={handleSubmitClick}
+                  className="px-5 py-2.5 bg-red-500 text-white rounded-lg font-bold hover:bg-red-600 transition"
+                >
+                  제출
+                </button>
+              ) : (
+                <button
+                  onClick={() =>
+                    setCurrentIndex(prev => Math.min(questions.length - 1, prev + 1))
+                  }
+                  disabled={currentIndex === questions.length - 1}
+                  className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                >
+                  다음 &rarr;
+                </button>
+              )}
             </div>
           </div>
         </main>

@@ -55,3 +55,39 @@ function getWrongMap(): Record<string, string[]> {
     return {};
   }
 }
+
+const ANSWERS_KEY = 'bigdata-cbt-answers';
+
+export function saveExamAnswers(key: string, answers: Record<string, number>): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const all = getAnswersMap();
+    all[key] = answers;
+    localStorage.setItem(ANSWERS_KEY, JSON.stringify(all));
+  } catch { /* ignore */ }
+}
+
+export function getExamAnswers(key: string): Record<string, number> | undefined {
+  const map = getAnswersMap();
+  const saved = map[key];
+  return saved && Object.keys(saved).length > 0 ? saved : undefined;
+}
+
+export function clearExamAnswers(key: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const all = getAnswersMap();
+    delete all[key];
+    localStorage.setItem(ANSWERS_KEY, JSON.stringify(all));
+  } catch { /* ignore */ }
+}
+
+function getAnswersMap(): Record<string, Record<string, number>> {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem(ANSWERS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
