@@ -158,6 +158,17 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* 주의사항 */}
+        <section className="bg-amber-50 p-6 rounded-xl border border-amber-200">
+          <h3 className="font-bold text-amber-800 mb-3">주의사항</h3>
+          <div className="text-sm text-amber-900 space-y-1.5">
+            <p>- 본 사이트의 모든 문제(제1회~제11회)는 <strong>AI가 생성한 모의문제</strong>입니다.</p>
+            <p>- 실제 빅데이터분석기사 필기 기출문제가 아니며, 출제범위와 난이도를 참고하여 제작되었습니다.</p>
+            <p>- 일부 문제의 정답이나 해설이 정확하지 않을 수 있으니, 학습 참고용으로만 활용해주세요.</p>
+            <p>- 실제 시험 합격을 위해서는 공인 교재 및 기출복원 자료를 병행하시길 권장합니다.</p>
+          </div>
+        </section>
+
         {/* 기록 초기화 */}
         {completedCount > 0 && (
           <div className="text-center">
