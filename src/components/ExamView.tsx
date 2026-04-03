@@ -212,6 +212,18 @@ export default function ExamView() {
     return '전체 문제';
   }, [mode, questions, sessionParam, wrongOf]);
 
+  const currentUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    params.set('mode', mode);
+    params.set('id', id);
+    if (sessionParam) params.set('session', sessionParam);
+    return `/exam?${params.toString()}`;
+  }, [mode, id, sessionParam]);
+
+  const wrongCount = result
+    ? result.totalQuestions - result.correctCount
+    : 0;
+
   if (questions.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 gap-4">
@@ -225,18 +237,6 @@ export default function ExamView() {
       </div>
     );
   }
-
-  const wrongCount = result
-    ? result.totalQuestions - result.correctCount
-    : 0;
-
-  const currentUrl = useMemo(() => {
-    const params = new URLSearchParams();
-    params.set('mode', mode);
-    params.set('id', id);
-    if (sessionParam) params.set('session', sessionParam);
-    return `/exam?${params.toString()}`;
-  }, [mode, id, sessionParam]);
 
   if (phase === 'result' && result) {
     return (
