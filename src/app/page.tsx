@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { SESSIONS } from '@/data';
 import { SUBJECTS } from '@/data/subjects';
-import { getHistory, ExamRecord } from '@/lib/storage';
+import { getHistory, getWrongIds, ExamRecord } from '@/lib/storage';
 
 export default function HomePage() {
   const [history, setHistory] = useState<ExamRecord[]>([]);
@@ -45,15 +45,16 @@ export default function HomePage() {
           <h2 className="text-xl font-bold text-gray-800 mb-4">회차별 풀기</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {SESSIONS.map(session => {
-              const record = getRecord(`session-${session.id}`);
+              const examKey = `session-${session.id}`;
+              const record = getRecord(examKey);
+              const wrongIds = getWrongIds(examKey);
               return (
-                <Link
+                <div
                   key={session.id}
-                  href={`/exam?mode=session&id=${session.id}`}
-                  className={`block p-6 bg-white rounded-xl border transition group relative ${
+                  className={`p-6 bg-white rounded-xl border transition relative ${
                     record
-                      ? 'border-green-300 hover:border-green-400 hover:shadow-md'
-                      : 'border-gray-200 hover:border-blue-400 hover:shadow-md'
+                      ? 'border-green-300'
+                      : 'border-gray-200'
                   }`}
                 >
                   {record && (
@@ -69,13 +70,23 @@ export default function HomePage() {
                       </span>
                     </div>
                   )}
-                  <div className="text-lg font-bold text-gray-800 group-hover:text-blue-600 transition">
-                    {session.name}
-                  </div>
-                  <div className="text-sm text-gray-400 mt-1">
-                    {session.questionCount}문항 &middot; 120분
-                  </div>
-                </Link>
+                  <Link href={`/exam?mode=session&id=${session.id}`} className="block group">
+                    <div className="text-lg font-bold text-gray-800 group-hover:text-blue-600 transition">
+                      {session.name}
+                    </div>
+                    <div className="text-sm text-gray-400 mt-1">
+                      {session.questionCount}문항 &middot; 120분
+                    </div>
+                  </Link>
+                  {record && wrongIds.length > 0 && (
+                    <Link
+                      href={`/exam?wrong=${encodeURIComponent(examKey)}`}
+                      className="inline-block mt-3 px-3 py-1.5 text-xs font-bold text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition"
+                    >
+                      오답 {wrongIds.length}문제 다시풀기
+                    </Link>
+                  )}
+                </div>
               );
             })}
           </div>
@@ -99,22 +110,34 @@ export default function HomePage() {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {SESSIONS.map(session => {
-                    const record = getRecord(`subject-${subject.id}-${session.id}`);
+                    const subjectKey = `subject-${subject.id}-${session.id}`;
+                    const record = getRecord(subjectKey);
+                    const wrongIds = getWrongIds(subjectKey);
                     return (
-                      <Link
-                        key={session.id}
-                        href={`/exam?mode=subject&id=${subject.id}&session=${session.id}`}
-                        className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition ${
-                          record
-                            ? 'bg-green-50 text-green-700 border border-green-200 hover:bg-green-100'
-                            : 'bg-gray-50 text-gray-700 border border-gray-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200'
-                        }`}
-                      >
-                        {session.name}
-                        {record && (
-                          <span className="text-xs opacity-75">{record.score}점</span>
+                      <div key={session.id} className="flex items-center gap-1">
+                        <Link
+                          href={`/exam?mode=subject&id=${subject.id}&session=${session.id}`}
+                          className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition ${
+                            record
+                              ? 'bg-green-50 text-green-700 border border-green-200 hover:bg-green-100'
+                              : 'bg-gray-50 text-gray-700 border border-gray-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200'
+                          }`}
+                        >
+                          {session.name}
+                          {record && (
+                            <span className="text-xs opacity-75">{record.score}점</span>
+                          )}
+                        </Link>
+                        {record && wrongIds.length > 0 && (
+                          <Link
+                            href={`/exam?wrong=${encodeURIComponent(subjectKey)}`}
+                            className="px-1.5 py-2 text-xs font-bold text-red-500 hover:text-red-700 transition"
+                            title={`오답 ${wrongIds.length}문제`}
+                          >
+                            X{wrongIds.length}
+                          </Link>
                         )}
-                      </Link>
+                      </div>
                     );
                   })}
                 </div>

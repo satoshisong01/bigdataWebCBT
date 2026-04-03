@@ -4,8 +4,8 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Question, ExamResult } from '@/types';
 import { calculateResult } from '@/lib/utils';
-import { getQuestionsBySession, getQuestionsBySubject, getQuestionsBySubjectAndSession, getAllQuestions } from '@/data';
-import { saveRecord } from '@/lib/storage';
+import { getQuestionsBySession, getQuestionsBySubject, getQuestionsBySubjectAndSession, getQuestionsByIds, getAllQuestions } from '@/data';
+import { saveRecord, saveWrongIds, getWrongIds } from '@/lib/storage';
 import QuestionCard from './QuestionCard';
 import ExamHeader from './ExamHeader';
 import QuestionNav from './QuestionNav';
@@ -22,6 +22,7 @@ export default function ExamView() {
   const mode = searchParams.get('mode') ?? 'session';
   const id = searchParams.get('id') ?? '';
   const sessionParam = searchParams.get('session');
+  const wrongOf = searchParams.get('wrong');
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<Record<string, number>>({});
@@ -35,6 +36,12 @@ export default function ExamView() {
   const submitRef = useRef<(() => void) | undefined>(undefined);
 
   useEffect(() => {
+    if (wrongOf) {
+      const ids = getWrongIds(wrongOf);
+      setQuestions(getQuestionsByIds(ids));
+      return;
+    }
+
     let loaded: Question[] = [];
     if (mode === 'session') {
       loaded = getQuestionsBySession(id);
@@ -48,7 +55,14 @@ export default function ExamView() {
       loaded = getAllQuestions();
     }
     setQuestions(loaded);
-  }, [mode, id, sessionParam]);
+  }, [mode, id, sessionParam, wrongOf]);
+
+  const examKey = useMemo(() => {
+    if (wrongOf) return wrongOf;
+    if (mode === 'session') return `session-${id}`;
+    if (mode === 'subject' && sessionParam) return `subject-${id}-${sessionParam}`;
+    return 'all';
+  }, [mode, id, sessionParam, wrongOf]);
 
   const doSubmit = useCallback(() => {
     if (questions.length === 0) return;
@@ -56,19 +70,18 @@ export default function ExamView() {
     setResult(r);
     setPhase('result');
 
-    const examKey =
-      mode === 'session'
-        ? `session-${id}`
-        : mode === 'subject' && sessionParam
-          ? `subject-${id}-${sessionParam}`
-          : `all`;
     saveRecord({
       key: examKey,
       score: r.score,
       passed: r.passed,
       date: new Date().toISOString(),
     });
-  }, [questions, answers, timeElapsed, mode, id, sessionParam]);
+
+    const wrongIds = questions
+      .filter(q => answers[q.id] !== q.answer)
+      .map(q => q.id);
+    saveWrongIds(examKey, wrongIds);
+  }, [questions, answers, timeElapsed, examKey]);
 
   submitRef.current = doSubmit;
 
@@ -184,14 +197,20 @@ export default function ExamView() {
   const timeRemaining = Math.max(0, TIME_LIMIT - timeElapsed);
 
   const title = useMemo(() => {
-    if (mode === 'session') return questions[0]?.session ?? '';
+    const prefix = wrongOf ? '오답 다시풀기 - ' : '';
+    if (wrongOf) {
+      const first = questions[0];
+      if (!first) return '오답 다시풀기';
+      return `${prefix}${first.session}`;
+    }
+    if (mode === 'session') return `${prefix}${questions[0]?.session ?? ''}`;
     if (mode === 'subject') {
       const subjectName = questions[0]?.subjectName ?? '';
       const session = sessionParam ? questions[0]?.session ?? '' : '전체';
-      return `${subjectName} - ${session}`;
+      return `${prefix}${subjectName} - ${session}`;
     }
     return '전체 문제';
-  }, [mode, questions, sessionParam]);
+  }, [mode, questions, sessionParam, wrongOf]);
 
   if (questions.length === 0) {
     return (
@@ -207,14 +226,29 @@ export default function ExamView() {
     );
   }
 
+  const wrongCount = result
+    ? result.totalQuestions - result.correctCount
+    : 0;
+
+  const currentUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    params.set('mode', mode);
+    params.set('id', id);
+    if (sessionParam) params.set('session', sessionParam);
+    return `/exam?${params.toString()}`;
+  }, [mode, id, sessionParam]);
+
   if (phase === 'result' && result) {
     return (
       <ResultView
         result={result}
+        wrongCount={wrongCount}
         onReview={() => {
           setCurrentIndex(0);
           setPhase('review');
         }}
+        onRetry={() => router.push(currentUrl)}
+        onRetryWrong={() => router.push(`/exam?wrong=${encodeURIComponent(examKey)}`)}
         onHome={() => router.push('/')}
       />
     );

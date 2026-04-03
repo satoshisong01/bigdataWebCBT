@@ -4,11 +4,14 @@ import { ExamResult } from '@/types';
 
 interface ResultViewProps {
   result: ExamResult;
+  wrongCount: number;
   onReview: () => void;
+  onRetry: () => void;
+  onRetryWrong: () => void;
   onHome: () => void;
 }
 
-export default function ResultView({ result, onReview, onHome }: ResultViewProps) {
+export default function ResultView({ result, wrongCount, onReview, onRetry, onRetryWrong, onHome }: ResultViewProps) {
   const minutes = Math.floor(result.timeTaken / 60);
   const seconds = result.timeTaken % 60;
 
@@ -85,16 +88,30 @@ export default function ResultView({ result, onReview, onHome }: ResultViewProps
           </ul>
         </div>
 
-        <div className="flex gap-4">
+        <div className="grid grid-cols-2 gap-3">
           <button
             onClick={onReview}
-            className="flex-1 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition"
+            className="py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition"
           >
             해설 보기
           </button>
           <button
+            onClick={onRetry}
+            className="py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition"
+          >
+            다시 풀기
+          </button>
+          {wrongCount > 0 && (
+            <button
+              onClick={onRetryWrong}
+              className="col-span-2 py-3 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 transition"
+            >
+              틀린 문제만 다시 풀기 ({wrongCount}문제)
+            </button>
+          )}
+          <button
             onClick={onHome}
-            className="flex-1 py-3 bg-gray-200 text-gray-800 font-bold rounded-lg hover:bg-gray-300 transition"
+            className="col-span-2 py-3 bg-gray-200 text-gray-800 font-bold rounded-lg hover:bg-gray-300 transition"
           >
             홈으로
           </button>

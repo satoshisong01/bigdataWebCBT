@@ -42,6 +42,11 @@ export function getQuestionsBySubjectAndSession(subjectId: number, sessionId: st
   return ALL_QUESTIONS.filter(q => q.subject === subjectId && q.sessionId === sessionId);
 }
 
+export function getQuestionsByIds(ids: string[]): Question[] {
+  const idSet = new Set(ids);
+  return ALL_QUESTIONS.filter(q => idSet.has(q.id));
+}
+
 export function getAllQuestions(): Question[] {
   return [...ALL_QUESTIONS];
 }

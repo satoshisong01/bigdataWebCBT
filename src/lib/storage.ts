@@ -1,4 +1,5 @@
 const HISTORY_KEY = 'bigdata-cbt-history';
+const WRONG_KEY = 'bigdata-cbt-wrong';
 
 export interface ExamRecord {
   key: string;
@@ -30,4 +31,27 @@ export function saveRecord(record: ExamRecord): void {
 
 export function getRecord(key: string): ExamRecord | undefined {
   return getHistory().find(r => r.key === key);
+}
+
+export function saveWrongIds(key: string, ids: string[]): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const all = getWrongMap();
+    all[key] = ids;
+    localStorage.setItem(WRONG_KEY, JSON.stringify(all));
+  } catch { /* ignore */ }
+}
+
+export function getWrongIds(key: string): string[] {
+  return getWrongMap()[key] ?? [];
+}
+
+function getWrongMap(): Record<string, string[]> {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem(WRONG_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
 }
