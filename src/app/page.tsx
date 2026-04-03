@@ -21,29 +21,29 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-5xl mx-auto px-6 py-16 text-center">
-          <h1 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16 text-center">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-900 tracking-tight">
             빅데이터분석기사 필기 CBT
           </h1>
-          <p className="text-gray-500 mt-3 text-lg">기출문제 풀이 및 해설</p>
-          <div className="flex justify-center gap-8 mt-6 text-sm text-gray-400">
+          <p className="text-gray-500 mt-2 sm:mt-3 text-base sm:text-lg">기출문제 풀이 및 해설</p>
+          <div className="flex justify-center gap-4 sm:gap-8 mt-4 sm:mt-6 text-xs sm:text-sm text-gray-400">
             <span>{SESSIONS.length}회차</span>
             <span>4과목</span>
             <span>총 {totalQuestions}문항</span>
           </div>
           {completedCount > 0 && (
-            <div className="mt-4 inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 text-blue-700 text-sm font-medium rounded-full">
+            <div className="mt-3 sm:mt-4 inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 text-blue-700 text-xs sm:text-sm font-medium rounded-full">
               {completedCount}개 완료
             </div>
           )}
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 py-10 space-y-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-8 sm:space-y-12">
         {/* 회차별 풀기 */}
         <section>
-          <h2 className="text-xl font-bold text-gray-800 mb-4">회차별 풀기</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">회차별 풀기</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {SESSIONS.map(session => {
               const examKey = `session-${session.id}`;
               const record = getRecord(examKey);
@@ -51,7 +51,7 @@ export default function HomePage() {
               return (
                 <div
                   key={session.id}
-                  className={`p-6 bg-white rounded-xl border transition relative ${
+                  className={`p-4 sm:p-6 bg-white rounded-xl border transition relative ${
                     record
                       ? 'border-green-300'
                       : 'border-gray-200'
@@ -71,17 +71,17 @@ export default function HomePage() {
                     </div>
                   )}
                   <Link href={`/exam?mode=session&id=${session.id}`} className="block group">
-                    <div className="text-lg font-bold text-gray-800 group-hover:text-blue-600 transition">
+                    <div className="text-base sm:text-lg font-bold text-gray-800 group-hover:text-blue-600 transition">
                       {session.name}
                     </div>
-                    <div className="text-sm text-gray-400 mt-1">
+                    <div className="text-xs sm:text-sm text-gray-400 mt-1">
                       {session.questionCount}문항 &middot; 120분
                     </div>
                   </Link>
                   {record && wrongIds.length > 0 && (
                     <Link
                       href={`/exam?wrong=${encodeURIComponent(examKey)}`}
-                      className="inline-block mt-3 px-3 py-1.5 text-xs font-bold text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition"
+                      className="inline-block mt-2 sm:mt-3 px-3 py-1.5 text-xs font-bold text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 active:bg-red-200 transition"
                     >
                       오답 {wrongIds.length}문제 다시풀기
                     </Link>
@@ -94,44 +94,44 @@ export default function HomePage() {
 
         {/* 과목별 풀기 */}
         <section>
-          <h2 className="text-xl font-bold text-gray-800 mb-4">과목별 풀기</h2>
-          <div className="space-y-4">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">과목별 풀기</h2>
+          <div className="space-y-3 sm:space-y-4">
             {SUBJECTS.map(subject => (
               <div
                 key={subject.id}
-                className="bg-white rounded-xl border border-gray-200 p-5"
+                className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5"
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-sm text-blue-600 font-bold">{subject.id}과목</span>
-                  <span className="text-base font-bold text-gray-800">
+                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                  <span className="text-xs sm:text-sm text-blue-600 font-bold">{subject.id}과목</span>
+                  <span className="text-sm sm:text-base font-bold text-gray-800">
                     {subject.name}
                   </span>
-                  <span className="text-xs text-gray-400">회차당 20문항</span>
+                  <span className="text-xs text-gray-400 hidden sm:inline">회차당 20문항</span>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-1.5 sm:gap-2">
                   {SESSIONS.map(session => {
                     const subjectKey = `subject-${subject.id}-${session.id}`;
                     const record = getRecord(subjectKey);
                     const wrongIds = getWrongIds(subjectKey);
                     return (
-                      <div key={session.id} className="flex items-center gap-1">
+                      <div key={session.id} className="flex items-center gap-0.5 sm:gap-1">
                         <Link
                           href={`/exam?mode=subject&id=${subject.id}&session=${session.id}`}
-                          className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition ${
+                          className={`inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition w-full sm:w-auto justify-center sm:justify-start ${
                             record
-                              ? 'bg-green-50 text-green-700 border border-green-200 hover:bg-green-100'
-                              : 'bg-gray-50 text-gray-700 border border-gray-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200'
+                              ? 'bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 active:bg-green-200'
+                              : 'bg-gray-50 text-gray-700 border border-gray-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 active:bg-blue-100'
                           }`}
                         >
-                          {session.name}
+                          <span className="truncate">{session.name}</span>
                           {record && (
-                            <span className="text-xs opacity-75">{record.score}점</span>
+                            <span className="text-xs opacity-75 flex-shrink-0">{record.score}점</span>
                           )}
                         </Link>
                         {record && wrongIds.length > 0 && (
                           <Link
                             href={`/exam?wrong=${encodeURIComponent(subjectKey)}`}
-                            className="px-1.5 py-2 text-xs font-bold text-red-500 hover:text-red-700 transition"
+                            className="px-1 sm:px-1.5 py-1.5 sm:py-2 text-xs font-bold text-red-500 hover:text-red-700 active:text-red-800 transition flex-shrink-0"
                             title={`오답 ${wrongIds.length}문제`}
                           >
                             X{wrongIds.length}
@@ -147,9 +147,9 @@ export default function HomePage() {
         </section>
 
         {/* 안내 */}
-        <section className="bg-white p-6 rounded-xl border border-gray-200">
-          <h3 className="font-bold text-gray-800 mb-3">시험 안내</h3>
-          <div className="text-sm text-gray-500 space-y-1.5">
+        <section className="bg-white p-4 sm:p-6 rounded-xl border border-gray-200">
+          <h3 className="font-bold text-gray-800 mb-2 sm:mb-3 text-sm sm:text-base">시험 안내</h3>
+          <div className="text-xs sm:text-sm text-gray-500 space-y-1 sm:space-y-1.5">
             <p>- 시험 시간: 120분 (80문항, 4과목)</p>
             <p>- 합격 기준: 전 과목 평균 60점 이상, 과목당 40점 이상</p>
             <p>- 풀이 중 해설 확인 가능 (학습 모드)</p>
@@ -159,9 +159,9 @@ export default function HomePage() {
         </section>
 
         {/* 주의사항 */}
-        <section className="bg-amber-50 p-6 rounded-xl border border-amber-200">
-          <h3 className="font-bold text-amber-800 mb-3">주의사항</h3>
-          <div className="text-sm text-amber-900 space-y-1.5">
+        <section className="bg-amber-50 p-4 sm:p-6 rounded-xl border border-amber-200">
+          <h3 className="font-bold text-amber-800 mb-2 sm:mb-3 text-sm sm:text-base">주의사항</h3>
+          <div className="text-xs sm:text-sm text-amber-900 space-y-1 sm:space-y-1.5">
             <p>- <strong>제2회~제8회</strong>는 수험생 복원 기반의 <strong>기출복원 문제</strong>입니다. 실제 시험과 일부 차이가 있을 수 있습니다.</p>
             <p>- <strong>제1회, 제9회~제11회</strong>는 출제범위와 난이도를 참고하여 <strong>AI가 생성한 모의문제</strong>입니다.</p>
             <p>- 일부 문제의 정답이나 해설이 정확하지 않을 수 있으니, 학습 참고용으로만 활용해주세요.</p>
@@ -171,7 +171,7 @@ export default function HomePage() {
 
         {/* 기록 초기화 */}
         {completedCount > 0 && (
-          <div className="text-center">
+          <div className="text-center pb-4">
             <button
               onClick={() => {
                 if (confirm('모든 풀이 기록을 초기화하시겠습니까?')) {
@@ -179,7 +179,7 @@ export default function HomePage() {
                   setHistory([]);
                 }
               }}
-              className="text-sm text-gray-400 hover:text-red-500 transition"
+              className="text-xs sm:text-sm text-gray-400 hover:text-red-500 active:text-red-600 transition"
             >
               풀이 기록 초기화
             </button>

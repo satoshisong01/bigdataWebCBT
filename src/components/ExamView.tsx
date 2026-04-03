@@ -30,6 +30,7 @@ export default function ExamView() {
   const [phase, setPhase] = useState<Phase>('exam');
   const [shownExplanations, setShownExplanations] = useState<Set<string>>(new Set());
   const [checkedQuestions, setCheckedQuestions] = useState<Set<string>>(new Set());
+  const [passedQuestions, setPassedQuestions] = useState<Set<string>>(new Set());
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [result, setResult] = useState<ExamResult | null>(null);
   const [retryContext, setRetryContext] = useState<RetryContext | null>(null);
@@ -42,6 +43,7 @@ export default function ExamView() {
     setPhase('exam');
     setShownExplanations(new Set());
     setCheckedQuestions(new Set());
+    setPassedQuestions(new Set());
     setTimeElapsed(0);
     setResult(null);
 
@@ -165,6 +167,26 @@ export default function ExamView() {
     }
   }, [answers, questions.length, doSubmit]);
 
+  const handlePass = useCallback(() => {
+    const q = questions[currentIndex];
+    if (!q) return;
+    setPassedQuestions(prev => {
+      const next = new Set(prev);
+      next.add(q.id);
+      return next;
+    });
+    setAnswers(prev => {
+      const next = { ...prev };
+      delete next[q.id];
+      return next;
+    });
+    setCheckedQuestions(prev => {
+      const next = new Set(prev);
+      next.add(q.id);
+      return next;
+    });
+  }, [questions, currentIndex]);
+
   const handleCheck = useCallback(() => {
     const q = questions[currentIndex];
     if (!q || answers[q.id] === undefined) return;
@@ -188,6 +210,10 @@ export default function ExamView() {
     let correct = 0;
     let wrong = 0;
     for (const qId of checkedQuestions) {
+      if (passedQuestions.has(qId)) {
+        wrong++;
+        continue;
+      }
       const q = questions.find(item => item.id === qId);
       if (q) {
         if (answers[qId] === q.answer) correct++;
@@ -195,7 +221,7 @@ export default function ExamView() {
       }
     }
     return { checkedCorrect: correct, checkedWrong: wrong };
-  }, [checkedQuestions, questions, answers]);
+  }, [checkedQuestions, passedQuestions, questions, answers]);
 
   const toggleExplanation = useCallback(() => {
     const q = questions[currentIndex];
@@ -224,13 +250,17 @@ export default function ExamView() {
     if (checkedQuestions.size === 0) return undefined;
     const map: Record<string, boolean> = {};
     for (const qId of checkedQuestions) {
+      if (passedQuestions.has(qId)) {
+        map[qId] = false;
+        continue;
+      }
       const q = questions.find(item => item.id === qId);
       if (q) {
         map[qId] = answers[qId] === q.answer;
       }
     }
     return map;
-  }, [checkedQuestions, questions, answers]);
+  }, [checkedQuestions, passedQuestions, questions, answers]);
 
   const answeredCount = Object.keys(answers).length;
   const currentQuestion = questions[currentIndex];
@@ -274,6 +304,7 @@ export default function ExamView() {
     setPhase('exam');
     setShownExplanations(new Set());
     setCheckedQuestions(new Set());
+    setPassedQuestions(new Set());
     setTimeElapsed(0);
     setResult(null);
   }, [examKey]);
@@ -289,6 +320,7 @@ export default function ExamView() {
     setPhase('exam');
     setShownExplanations(new Set());
     setCheckedQuestions(new Set());
+    setPassedQuestions(new Set());
     setTimeElapsed(0);
     setResult(null);
   }, [questions, answers, retryContext]);
@@ -351,9 +383,9 @@ export default function ExamView() {
           />
         </aside>
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-8">
+        <main className="flex-1 overflow-y-auto p-3 sm:p-8">
           <div className="max-w-3xl mx-auto">
-            <div className="text-sm text-blue-600 font-medium mb-4">
+            <div className="text-xs sm:text-sm text-blue-600 font-medium mb-3 sm:mb-4">
               {currentQuestion.subjectName}
             </div>
 
@@ -370,78 +402,157 @@ export default function ExamView() {
             />
 
             {phase === 'exam' && checkedQuestions.size > 0 && (
-              <div className="flex items-center gap-4 mt-6 text-sm">
+              <div className="flex items-center gap-3 sm:gap-4 mt-4 sm:mt-6 text-xs sm:text-sm">
                 <span className="text-gray-500">확인 {checkedQuestions.size}문제</span>
                 <span className="text-green-600 font-bold">O {checkedCorrect}</span>
                 <span className="text-red-600 font-bold">X {checkedWrong}</span>
               </div>
             )}
 
-            <div className="flex items-center justify-between mt-4 pt-6 border-t border-gray-200">
-              <button
-                onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
-                disabled={currentIndex === 0}
-                className="px-5 py-2.5 bg-white border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
-              >
-                &larr; 이전
-              </button>
-
-              <div className="flex items-center gap-2">
+            <div className="mt-4 pt-4 sm:pt-6 border-t border-gray-200">
+              {/* Mobile: stacked layout */}
+              <div className="flex sm:hidden flex-col gap-2">
                 {phase === 'exam' && (
-                  <>
+                  <div className="flex gap-2">
                     <button
                       onClick={toggleExplanation}
-                      className={`px-3 py-2 rounded-lg font-medium text-sm transition ${
+                      className={`flex-1 py-2.5 rounded-lg font-medium text-xs transition ${
                         shownExplanations.has(currentQuestion.id)
                           ? 'bg-amber-100 text-amber-800 border border-amber-300'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          : 'bg-gray-100 text-gray-600 active:bg-gray-200'
                       }`}
                     >
-                      {shownExplanations.has(currentQuestion.id) ? '해설 숨기기' : '해설 보기'}
+                      {shownExplanations.has(currentQuestion.id) ? '해설 숨기기' : '해설'}
                     </button>
+                    {!checkedQuestions.has(currentQuestion.id) && (
+                      <button
+                        onClick={handlePass}
+                        className="flex-1 py-2.5 rounded-lg font-bold text-xs bg-gray-400 text-white active:bg-gray-500 transition"
+                      >
+                        패스
+                      </button>
+                    )}
                     <button
                       onClick={handleCheck}
-                      disabled={answers[currentQuestion.id] === undefined}
-                      className={`px-4 py-2 rounded-lg font-bold text-sm transition ${
+                      disabled={answers[currentQuestion.id] === undefined && !passedQuestions.has(currentQuestion.id)}
+                      className={`flex-1 py-2.5 rounded-lg font-bold text-xs transition ${
                         checkedQuestions.has(currentQuestion.id)
                           ? currentIndex === questions.length - 1
-                            ? 'bg-red-500 text-white hover:bg-red-600'
-                            : 'bg-green-600 text-white hover:bg-green-700'
-                          : 'bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-40 disabled:cursor-not-allowed'
+                            ? 'bg-red-500 text-white active:bg-red-600'
+                            : 'bg-green-600 text-white active:bg-green-700'
+                          : 'bg-orange-500 text-white active:bg-orange-600 disabled:opacity-40'
                       }`}
                     >
                       {checkedQuestions.has(currentQuestion.id)
-                        ? currentIndex === questions.length - 1 ? '제출' : '다음 문제 →'
+                        ? currentIndex === questions.length - 1 ? '제출' : '다음 문제'
                         : '확인'}
                     </button>
-                  </>
+                  </div>
                 )}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
+                    disabled={currentIndex === 0}
+                    className="flex-1 py-2.5 bg-white border border-gray-300 rounded-lg font-medium text-sm text-gray-700 active:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  >
+                    &larr; 이전
+                  </button>
+                  {phase === 'exam' && currentIndex === questions.length - 1 ? (
+                    <button
+                      onClick={handleSubmitClick}
+                      className="flex-1 py-2.5 bg-red-500 text-white rounded-lg font-bold text-sm active:bg-red-600 transition"
+                    >
+                      제출
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() =>
+                        setCurrentIndex(prev => Math.min(questions.length - 1, prev + 1))
+                      }
+                      disabled={currentIndex === questions.length - 1}
+                      className="flex-1 py-2.5 bg-blue-600 text-white rounded-lg font-medium text-sm active:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                    >
+                      다음 &rarr;
+                    </button>
+                  )}
+                </div>
               </div>
 
-              {phase === 'exam' && currentIndex === questions.length - 1 ? (
+              {/* Desktop: single row */}
+              <div className="hidden sm:flex items-center justify-between">
                 <button
-                  onClick={handleSubmitClick}
-                  className="px-5 py-2.5 bg-red-500 text-white rounded-lg font-bold hover:bg-red-600 transition"
+                  onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
+                  disabled={currentIndex === 0}
+                  className="px-5 py-2.5 bg-white border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
                 >
-                  제출
+                  &larr; 이전
                 </button>
-              ) : (
-                <button
-                  onClick={() =>
-                    setCurrentIndex(prev => Math.min(questions.length - 1, prev + 1))
-                  }
-                  disabled={currentIndex === questions.length - 1}
-                  className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
-                >
-                  다음 &rarr;
-                </button>
-              )}
+
+                <div className="flex items-center gap-2">
+                  {phase === 'exam' && (
+                    <>
+                      <button
+                        onClick={toggleExplanation}
+                        className={`px-3 py-2 rounded-lg font-medium text-sm transition ${
+                          shownExplanations.has(currentQuestion.id)
+                            ? 'bg-amber-100 text-amber-800 border border-amber-300'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        {shownExplanations.has(currentQuestion.id) ? '해설 숨기기' : '해설 보기'}
+                      </button>
+                      {!checkedQuestions.has(currentQuestion.id) && (
+                        <button
+                          onClick={handlePass}
+                          className="px-4 py-2 rounded-lg font-bold text-sm bg-gray-400 text-white hover:bg-gray-500 transition"
+                        >
+                          패스
+                        </button>
+                      )}
+                      <button
+                        onClick={handleCheck}
+                        disabled={answers[currentQuestion.id] === undefined && !passedQuestions.has(currentQuestion.id)}
+                        className={`px-4 py-2 rounded-lg font-bold text-sm transition ${
+                          checkedQuestions.has(currentQuestion.id)
+                            ? currentIndex === questions.length - 1
+                              ? 'bg-red-500 text-white hover:bg-red-600'
+                              : 'bg-green-600 text-white hover:bg-green-700'
+                            : 'bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-40 disabled:cursor-not-allowed'
+                        }`}
+                      >
+                        {checkedQuestions.has(currentQuestion.id)
+                          ? currentIndex === questions.length - 1 ? '제출' : '다음 문제 →'
+                          : '확인'}
+                      </button>
+                    </>
+                  )}
+                </div>
+
+                {phase === 'exam' && currentIndex === questions.length - 1 ? (
+                  <button
+                    onClick={handleSubmitClick}
+                    className="px-5 py-2.5 bg-red-500 text-white rounded-lg font-bold hover:bg-red-600 transition"
+                  >
+                    제출
+                  </button>
+                ) : (
+                  <button
+                    onClick={() =>
+                      setCurrentIndex(prev => Math.min(questions.length - 1, prev + 1))
+                    }
+                    disabled={currentIndex === questions.length - 1}
+                    className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  >
+                    다음 &rarr;
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </main>
       </div>
 
-      <div className="lg:hidden bg-white border-t border-gray-200 p-2 overflow-x-auto">
+      <div className="lg:hidden bg-white border-t border-gray-200 p-2 overflow-x-auto safe-bottom">
         <div className="flex gap-1 min-w-max px-1">
           {questions.map((q, idx) => {
             const isAnswered = answers[q.id] !== undefined;

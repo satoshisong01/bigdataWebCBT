@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
 import './globals.css';
 
@@ -12,6 +12,13 @@ const notoSansKR = Noto_Sans_KR({
 export const metadata: Metadata = {
   title: '빅데이터분석기사 필기 CBT',
   description: '빅데이터분석기사 필기시험 기출문제 CBT 모의고사 - 과목별, 회차별 풀이 및 해설',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({
