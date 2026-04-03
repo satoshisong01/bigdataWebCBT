@@ -10,6 +10,7 @@ interface QuestionNavProps {
   onNavigate: (index: number) => void;
   isSubmitted: boolean;
   correctAnswers?: Readonly<Record<string, boolean>>;
+  checkedAnswers?: Readonly<Record<string, boolean>>;
 }
 
 export default function QuestionNav({
@@ -19,6 +20,7 @@ export default function QuestionNav({
   onNavigate,
   isSubmitted,
   correctAnswers,
+  checkedAnswers,
 }: QuestionNavProps) {
   const groups = useMemo(() => {
     const map = new Map<number, { name: string; indices: number[] }>();
@@ -45,6 +47,17 @@ export default function QuestionNav({
       if (isCorrect) return 'bg-green-100 text-green-800 border-green-300';
       if (isAnswered) return 'bg-red-100 text-red-800 border-red-300';
       return 'bg-gray-100 text-gray-400 border-gray-200';
+    }
+
+    if (checkedAnswers && checkedAnswers[qId] !== undefined) {
+      const isCorrect = checkedAnswers[qId];
+      if (isCurrent) {
+        return isCorrect
+          ? 'bg-green-600 text-white ring-2 ring-green-300'
+          : 'bg-red-600 text-white ring-2 ring-red-300';
+      }
+      if (isCorrect) return 'bg-green-100 text-green-800 border-green-300';
+      return 'bg-red-100 text-red-800 border-red-300';
     }
 
     if (isCurrent) return 'bg-blue-600 text-white ring-2 ring-blue-300';

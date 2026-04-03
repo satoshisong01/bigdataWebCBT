@@ -192,6 +192,18 @@ export default function ExamView() {
     return map;
   }, [phase, questions, answers]);
 
+  const checkedAnswersMap = useMemo(() => {
+    if (checkedQuestions.size === 0) return undefined;
+    const map: Record<string, boolean> = {};
+    for (const qId of checkedQuestions) {
+      const q = questions.find(item => item.id === qId);
+      if (q) {
+        map[qId] = answers[qId] === q.answer;
+      }
+    }
+    return map;
+  }, [checkedQuestions, questions, answers]);
+
   const answeredCount = Object.keys(answers).length;
   const currentQuestion = questions[currentIndex];
   const timeRemaining = Math.max(0, TIME_LIMIT - timeElapsed);
@@ -278,6 +290,7 @@ export default function ExamView() {
             onNavigate={setCurrentIndex}
             isSubmitted={phase === 'review'}
             correctAnswers={correctAnswers}
+            checkedAnswers={checkedAnswersMap}
           />
         </aside>
 
@@ -370,6 +383,16 @@ export default function ExamView() {
                 : isAnswered
                   ? 'bg-red-100 text-red-800'
                   : 'bg-gray-100 text-gray-400';
+            } else if (checkedAnswersMap && checkedAnswersMap[q.id] !== undefined) {
+              if (isCurrent) {
+                cls = checkedAnswersMap[q.id]
+                  ? 'bg-green-600 text-white'
+                  : 'bg-red-600 text-white';
+              } else {
+                cls = checkedAnswersMap[q.id]
+                  ? 'bg-green-100 text-green-800'
+                  : 'bg-red-100 text-red-800';
+              }
             } else if (isCurrent) {
               cls = 'bg-blue-600 text-white';
             } else if (isAnswered) {
