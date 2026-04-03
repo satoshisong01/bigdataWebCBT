@@ -180,12 +180,12 @@ export default function ExamView() {
       delete next[q.id];
       return next;
     });
-    setCheckedQuestions(prev => {
-      const next = new Set(prev);
-      next.add(q.id);
-      return next;
-    });
-  }, [questions, currentIndex]);
+    if (currentIndex === questions.length - 1) {
+      doSubmit();
+    } else {
+      setCurrentIndex(prev => prev + 1);
+    }
+  }, [questions, currentIndex, doSubmit]);
 
   const handleCheck = useCallback(() => {
     const q = questions[currentIndex];
@@ -208,12 +208,8 @@ export default function ExamView() {
 
   const { checkedCorrect, checkedWrong } = useMemo(() => {
     let correct = 0;
-    let wrong = 0;
+    let wrong = passedQuestions.size;
     for (const qId of checkedQuestions) {
-      if (passedQuestions.has(qId)) {
-        wrong++;
-        continue;
-      }
       const q = questions.find(item => item.id === qId);
       if (q) {
         if (answers[qId] === q.answer) correct++;
@@ -247,13 +243,13 @@ export default function ExamView() {
   }, [phase, questions, answers]);
 
   const checkedAnswersMap = useMemo(() => {
-    if (checkedQuestions.size === 0) return undefined;
+    if (checkedQuestions.size === 0 && passedQuestions.size === 0) return undefined;
     const map: Record<string, boolean> = {};
+    for (const qId of passedQuestions) {
+      map[qId] = false;
+    }
     for (const qId of checkedQuestions) {
-      if (passedQuestions.has(qId)) {
-        map[qId] = false;
-        continue;
-      }
+      if (passedQuestions.has(qId)) continue;
       const q = questions.find(item => item.id === qId);
       if (q) {
         map[qId] = answers[qId] === q.answer;
@@ -401,9 +397,9 @@ export default function ExamView() {
               isSubmitted={phase === 'review' || checkedQuestions.has(currentQuestion.id)}
             />
 
-            {phase === 'exam' && checkedQuestions.size > 0 && (
+            {phase === 'exam' && (checkedQuestions.size > 0 || passedQuestions.size > 0) && (
               <div className="flex items-center gap-3 sm:gap-4 mt-4 sm:mt-6 text-xs sm:text-sm">
-                <span className="text-gray-500">확인 {checkedQuestions.size}문제</span>
+                <span className="text-gray-500">확인 {checkedQuestions.size + passedQuestions.size}문제</span>
                 <span className="text-green-600 font-bold">O {checkedCorrect}</span>
                 <span className="text-red-600 font-bold">X {checkedWrong}</span>
               </div>
@@ -424,7 +420,7 @@ export default function ExamView() {
                     >
                       {shownExplanations.has(currentQuestion.id) ? '해설 숨기기' : '해설'}
                     </button>
-                    {!checkedQuestions.has(currentQuestion.id) && (
+                    {!checkedQuestions.has(currentQuestion.id) && !passedQuestions.has(currentQuestion.id) && (
                       <button
                         onClick={handlePass}
                         className="flex-1 py-2.5 rounded-lg font-bold text-xs bg-gray-400 text-white active:bg-gray-500 transition"
@@ -432,9 +428,14 @@ export default function ExamView() {
                         패스
                       </button>
                     )}
+                    {passedQuestions.has(currentQuestion.id) && (
+                      <span className="flex-1 py-2.5 rounded-lg font-bold text-xs bg-red-100 text-red-600 text-center border border-red-200">
+                        패스됨
+                      </span>
+                    )}
                     <button
                       onClick={handleCheck}
-                      disabled={answers[currentQuestion.id] === undefined && !passedQuestions.has(currentQuestion.id)}
+                      disabled={answers[currentQuestion.id] === undefined}
                       className={`flex-1 py-2.5 rounded-lg font-bold text-xs transition ${
                         checkedQuestions.has(currentQuestion.id)
                           ? currentIndex === questions.length - 1
@@ -501,7 +502,7 @@ export default function ExamView() {
                       >
                         {shownExplanations.has(currentQuestion.id) ? '해설 숨기기' : '해설 보기'}
                       </button>
-                      {!checkedQuestions.has(currentQuestion.id) && (
+                      {!checkedQuestions.has(currentQuestion.id) && !passedQuestions.has(currentQuestion.id) && (
                         <button
                           onClick={handlePass}
                           className="px-4 py-2 rounded-lg font-bold text-sm bg-gray-400 text-white hover:bg-gray-500 transition"
@@ -509,9 +510,14 @@ export default function ExamView() {
                           패스
                         </button>
                       )}
+                      {passedQuestions.has(currentQuestion.id) && (
+                        <span className="px-4 py-2 rounded-lg font-bold text-sm bg-red-100 text-red-600 border border-red-200">
+                          패스됨
+                        </span>
+                      )}
                       <button
                         onClick={handleCheck}
-                        disabled={answers[currentQuestion.id] === undefined && !passedQuestions.has(currentQuestion.id)}
+                        disabled={answers[currentQuestion.id] === undefined}
                         className={`px-4 py-2 rounded-lg font-bold text-sm transition ${
                           checkedQuestions.has(currentQuestion.id)
                             ? currentIndex === questions.length - 1
