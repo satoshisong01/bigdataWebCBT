@@ -1,6 +1,7 @@
 'use client';
 
 import { Question } from '@/types';
+import { questionImages } from '@/data/images';
 
 interface QuestionCardProps {
   question: Question;
@@ -17,6 +18,8 @@ export default function QuestionCard({
   showExplanation,
   isSubmitted,
 }: QuestionCardProps) {
+  const images = questionImages[question.id] ?? [];
+
   const getOptionClass = (optionNum: number): string => {
     const base = 'w-full text-left p-4 rounded-lg border-2 transition-all flex items-start gap-3';
 
@@ -41,6 +44,21 @@ export default function QuestionCard({
         <span className="text-blue-600 font-bold mr-2">Q{question.number}.</span>
         <span className="font-medium whitespace-pre-wrap">{question.question}</span>
       </div>
+
+      {images.length > 0 && (
+        <div className="space-y-3">
+          {images.map((url, idx) => (
+            <div key={idx} className="rounded-lg overflow-hidden border border-gray-200 bg-white">
+              <img
+                src={url}
+                alt={`문제 ${question.number} 참고 이미지 ${idx + 1}`}
+                className="w-full h-auto max-h-96 object-contain"
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="space-y-3">
         {question.options.map((option, idx) => {
