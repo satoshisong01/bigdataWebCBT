@@ -198,13 +198,20 @@ export default function ExamView() {
         setCurrentIndex(prev => Math.min(questions.length - 1, prev + 1));
       }
     } else {
+      if (passedQuestions.has(q.id)) {
+        setPassedQuestions(prev => {
+          const next = new Set(prev);
+          next.delete(q.id);
+          return next;
+        });
+      }
       setCheckedQuestions(prev => {
         const next = new Set(prev);
         next.add(q.id);
         return next;
       });
     }
-  }, [questions, currentIndex, answers, checkedQuestions, doSubmit]);
+  }, [questions, currentIndex, answers, checkedQuestions, passedQuestions, doSubmit]);
 
   const { checkedCorrect, checkedWrong } = useMemo(() => {
     let correct = 0;
