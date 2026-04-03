@@ -566,8 +566,8 @@ export default function ExamView() {
         </main>
       </div>
 
-      <div className="lg:hidden bg-white border-t border-gray-200 p-2 overflow-x-auto safe-bottom">
-        <div className="flex gap-1 min-w-max px-1">
+      <div className="lg:hidden bg-white border-t border-gray-200 p-2 overflow-y-auto max-h-28 safe-bottom">
+        <div className="grid grid-cols-10 gap-1 px-1">
           {questions.map((q, idx) => {
             const isAnswered = answers[q.id] !== undefined;
             const isCurrent = idx === currentIndex;
@@ -601,7 +601,7 @@ export default function ExamView() {
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
-                className={`flex-shrink-0 w-8 h-8 text-xs font-bold rounded transition ${cls}`}
+                className={`w-full aspect-square text-xs font-bold rounded transition ${cls}`}
               >
                 {idx + 1}
               </button>
