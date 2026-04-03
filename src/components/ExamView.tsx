@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Question, ExamResult } from '@/types';
-import { calculateResult } from '@/lib/utils';
+import { calculateResult, buildRetryContext } from '@/lib/utils';
 import { getQuestionsBySession, getQuestionsBySubject, getQuestionsBySubjectAndSession, getQuestionsByIds, getAllQuestions } from '@/data';
-import { saveRecord, saveWrongIds, getWrongIds, saveExamAnswers, getExamAnswers, clearExamAnswers } from '@/lib/storage';
+import { saveRecord, saveWrongIds, getWrongIds, saveExamAnswers, getExamAnswers, clearExamAnswers, saveRetryContext, getRetryContext, clearRetryContext, RetryContext } from '@/lib/storage';
 import QuestionCard from './QuestionCard';
 import ExamHeader from './ExamHeader';
 import QuestionNav from './QuestionNav';
@@ -32,6 +32,7 @@ export default function ExamView() {
   const [checkedQuestions, setCheckedQuestions] = useState<Set<string>>(new Set());
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [result, setResult] = useState<ExamResult | null>(null);
+  const [retryContext, setRetryContext] = useState<RetryContext | null>(null);
 
   const submitRef = useRef<(() => void) | undefined>(undefined);
 
@@ -44,10 +45,13 @@ export default function ExamView() {
     setTimeElapsed(0);
     setResult(null);
 
+    setRetryContext(null);
+
     let loaded: Question[] = [];
     if (wrongOf) {
       const ids = getWrongIds(wrongOf);
       loaded = getQuestionsByIds(ids);
+      setRetryContext(getRetryContext(wrongOf) ?? null);
     } else if (mode === 'session') {
       loaded = getQuestionsBySession(id);
     } else if (mode === 'subject') {
@@ -80,7 +84,7 @@ export default function ExamView() {
 
   const doSubmit = useCallback(() => {
     if (questions.length === 0) return;
-    const r = calculateResult(questions, answers, timeElapsed);
+    const r = calculateResult(questions, answers, timeElapsed, retryContext ?? undefined);
     setResult(r);
     setPhase('result');
 
@@ -96,7 +100,12 @@ export default function ExamView() {
       .map(q => q.id);
     saveWrongIds(examKey, wrongIds);
     saveExamAnswers(examKey, answers);
-  }, [questions, answers, timeElapsed, examKey]);
+
+    if (wrongIds.length > 0) {
+      const ctx = buildRetryContext(questions, answers, retryContext);
+      saveRetryContext(examKey, ctx);
+    }
+  }, [questions, answers, timeElapsed, examKey, retryContext]);
 
   submitRef.current = doSubmit;
 
@@ -257,6 +266,8 @@ export default function ExamView() {
 
   const handleRetry = useCallback(() => {
     clearExamAnswers(examKey);
+    clearRetryContext(examKey);
+    setRetryContext(null);
     setQuestions(prev => [...prev]);
     setAnswers({});
     setCurrentIndex(0);
@@ -268,6 +279,9 @@ export default function ExamView() {
   }, [examKey]);
 
   const handleRetryWrong = useCallback(() => {
+    const ctx = buildRetryContext(questions, answers, retryContext);
+    setRetryContext(ctx);
+
     const wrongQs = questions.filter(q => answers[q.id] !== q.answer);
     setQuestions(wrongQs);
     setAnswers({});
@@ -277,7 +291,7 @@ export default function ExamView() {
     setCheckedQuestions(new Set());
     setTimeElapsed(0);
     setResult(null);
-  }, [questions, answers]);
+  }, [questions, answers, retryContext]);
 
   if (questions.length === 0) {
     return (

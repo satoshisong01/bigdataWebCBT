@@ -56,6 +56,45 @@ function getWrongMap(): Record<string, string[]> {
   }
 }
 
+const RETRY_CTX_KEY = 'bigdata-cbt-retry-ctx';
+
+export interface RetryContext {
+  totals: Record<number, number>;
+  baseCorrect: Record<number, number>;
+}
+
+export function saveRetryContext(key: string, ctx: RetryContext): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const all = getRetryCtxMap();
+    all[key] = ctx;
+    localStorage.setItem(RETRY_CTX_KEY, JSON.stringify(all));
+  } catch { /* ignore */ }
+}
+
+export function getRetryContext(key: string): RetryContext | undefined {
+  return getRetryCtxMap()[key];
+}
+
+export function clearRetryContext(key: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const all = getRetryCtxMap();
+    delete all[key];
+    localStorage.setItem(RETRY_CTX_KEY, JSON.stringify(all));
+  } catch { /* ignore */ }
+}
+
+function getRetryCtxMap(): Record<string, RetryContext> {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem(RETRY_CTX_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
 const ANSWERS_KEY = 'bigdata-cbt-answers';
 
 export function saveExamAnswers(key: string, answers: Record<string, number>): void {
