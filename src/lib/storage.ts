@@ -131,6 +131,10 @@ function getAnswersMap(): Record<string, Record<string, number>> {
   }
 }
 
+export function getAllExamAnswers(): Record<string, Record<string, number>> {
+  return getAnswersMap();
+}
+
 const BOOKMARKS_KEY = 'bigdata-cbt-bookmarks';
 const WRONG_STATS_KEY = 'bigdata-cbt-wrong-stats';
 
@@ -216,4 +220,24 @@ export function getActiveWrongIds(): string[] {
 export function clearAllWrongStats(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(WRONG_STATS_KEY);
+}
+
+export interface SubjectAccuracy {
+  subject: number;
+  attempted: number;
+  correct: number;
+  accuracy: number;
+}
+
+export function getSubjectAccuracyFromAttempts(
+  attemptsBySubject: Record<number, { correct: number; total: number }>,
+): SubjectAccuracy[] {
+  return Object.entries(attemptsBySubject)
+    .map(([id, data]) => ({
+      subject: Number(id),
+      attempted: data.total,
+      correct: data.correct,
+      accuracy: data.total > 0 ? Math.round((data.correct / data.total) * 100) : 0,
+    }))
+    .sort((a, b) => a.subject - b.subject);
 }
