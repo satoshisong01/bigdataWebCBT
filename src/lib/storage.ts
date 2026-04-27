@@ -229,6 +229,92 @@ export interface SubjectAccuracy {
   accuracy: number;
 }
 
+const STREAK_KEY = 'bigdata-cbt-streak';
+
+export interface StreakData {
+  /** ISO date strings (yyyy-mm-dd) of all study days */
+  days: string[];
+  current: number;
+  best: number;
+}
+
+function todayKey(): string {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function diffInDays(a: string, b: string): number {
+  const da = new Date(a + 'T00:00:00');
+  const db = new Date(b + 'T00:00:00');
+  return Math.round((db.getTime() - da.getTime()) / 86_400_000);
+}
+
+export function getStreak(): StreakData {
+  if (typeof window === 'undefined') return { days: [], current: 0, best: 0 };
+  try {
+    const raw = localStorage.getItem(STREAK_KEY);
+    if (!raw) return { days: [], current: 0, best: 0 };
+    const parsed = JSON.parse(raw) as StreakData;
+    return {
+      days: parsed.days ?? [],
+      current: parsed.current ?? 0,
+      best: parsed.best ?? 0,
+    };
+  } catch {
+    return { days: [], current: 0, best: 0 };
+  }
+}
+
+export function recordStudyToday(): StreakData {
+  if (typeof window === 'undefined') return { days: [], current: 0, best: 0 };
+  const today = todayKey();
+  const existing = getStreak();
+  const days = new Set(existing.days);
+  if (days.has(today)) return existing;
+  days.add(today);
+
+  const sorted = Array.from(days).sort();
+  // Compute current streak ending today
+  let current = 0;
+  let cursor = today;
+  while (days.has(cursor)) {
+    current += 1;
+    const prev = new Date(cursor + 'T00:00:00');
+    prev.setDate(prev.getDate() - 1);
+    const y = prev.getFullYear();
+    const m = String(prev.getMonth() + 1).padStart(2, '0');
+    const d = String(prev.getDate()).padStart(2, '0');
+    cursor = `${y}-${m}-${d}`;
+  }
+
+  // Compute longest streak ever
+  let best = 0;
+  let run = 0;
+  let prevDate: string | null = null;
+  for (const day of sorted) {
+    if (prevDate && diffInDays(prevDate, day) === 1) {
+      run += 1;
+    } else {
+      run = 1;
+    }
+    if (run > best) best = run;
+    prevDate = day;
+  }
+
+  const next: StreakData = {
+    days: sorted,
+    current,
+    best: Math.max(best, existing.best),
+  };
+  try {
+    localStorage.setItem(STREAK_KEY, JSON.stringify(next));
+  } catch { /* ignore */ }
+  return next;
+}
+
 export function getSubjectAccuracyFromAttempts(
   attemptsBySubject: Record<number, { correct: number; total: number }>,
 ): SubjectAccuracy[] {

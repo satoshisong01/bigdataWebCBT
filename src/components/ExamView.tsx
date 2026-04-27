@@ -12,6 +12,7 @@ import {
   saveRetryContext,
   clearRetryContext,
   recordWrongAnswers,
+  recordStudyToday,
   RetryContext,
 } from '@/lib/storage';
 import { useExamLoader } from '@/hooks/useExamLoader';
@@ -97,6 +98,9 @@ export default function ExamView() {
     // Update global wrong-stats pool (for spaced repetition)
     const attempted = questions.filter(q => answers[q.id] !== undefined).map(q => q.id);
     recordWrongAnswers(wrongIds, attempted);
+
+    // Record today as a study day for streak tracking
+    recordStudyToday();
 
     if (wrongIds.length > 0) {
       const ctx = buildRetryContext(questions, answers, retryContext);

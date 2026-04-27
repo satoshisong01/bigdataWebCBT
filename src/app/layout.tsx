@@ -12,6 +12,16 @@ const notoSansKR = Noto_Sans_KR({
 export const metadata: Metadata = {
   title: '빅데이터분석기사 필기 CBT',
   description: '빅데이터분석기사 필기시험 기출문제 CBT 모의고사 - 과목별, 회차별 풀이 및 해설',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    title: '빅분기 CBT',
+    statusBarStyle: 'black-translucent',
+  },
+  icons: {
+    icon: '/icon-192.svg',
+    apple: '/icon-192.svg',
+  },
 };
 
 export const viewport: Viewport = {
@@ -19,6 +29,10 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   viewportFit: 'cover',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0b1220' },
+  ],
 };
 
 export default function RootLayout({

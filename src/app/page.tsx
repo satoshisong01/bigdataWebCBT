@@ -4,21 +4,24 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { SESSIONS } from '@/data';
 import { SUBJECTS } from '@/data/subjects';
-import { getHistory, getWrongIds, getActiveWrongIds, getBookmarks, getAllExamAnswers, clearAllWrongStats, ExamRecord } from '@/lib/storage';
+import { getHistory, getWrongIds, getActiveWrongIds, getBookmarks, getAllExamAnswers, clearAllWrongStats, getStreak, StreakData, ExamRecord } from '@/lib/storage';
 import Dashboard from '@/components/Dashboard';
 import ThemeToggle from '@/components/ThemeToggle';
+import StreakBadge from '@/components/StreakBadge';
 
 export default function HomePage() {
   const [history, setHistory] = useState<ExamRecord[]>([]);
   const [wrongPoolCount, setWrongPoolCount] = useState(0);
   const [bookmarkCount, setBookmarkCount] = useState(0);
   const [answersMap, setAnswersMap] = useState<Record<string, Record<string, number>>>({});
+  const [streak, setStreak] = useState<StreakData>({ days: [], current: 0, best: 0 });
 
   useEffect(() => {
     setHistory(getHistory());
     setWrongPoolCount(getActiveWrongIds().length);
     setBookmarkCount(getBookmarks().length);
     setAnswersMap(getAllExamAnswers());
+    setStreak(getStreak());
   }, []);
 
   const getRecord = (key: string) => history.find(r => r.key === key);
@@ -53,6 +56,9 @@ export default function HomePage() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-8 sm:space-y-12">
         {/* 대시보드 */}
         <Dashboard history={history} answersMap={answersMap} />
+
+        {/* 학습 스트릭 */}
+        <StreakBadge streak={streak} />
 
         {/* 학습 풀 (오답노트 + 북마크) */}
         {(wrongPoolCount > 0 || bookmarkCount > 0) && (
