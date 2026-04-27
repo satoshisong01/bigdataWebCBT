@@ -4,8 +4,19 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Question, ExamResult } from '@/types';
 import { calculateResult, buildRetryContext } from '@/lib/utils';
-import { getQuestionsBySession, getQuestionsBySubject, getQuestionsBySubjectAndSession, getQuestionsByIds, getAllQuestions } from '@/data';
-import { saveRecord, saveWrongIds, getWrongIds, saveExamAnswers, getExamAnswers, clearExamAnswers, saveRetryContext, getRetryContext, clearRetryContext, recordWrongAnswers, getActiveWrongIds, getBookmarks, RetryContext } from '@/lib/storage';
+import {
+  saveRecord,
+  saveWrongIds,
+  saveExamAnswers,
+  clearExamAnswers,
+  saveRetryContext,
+  clearRetryContext,
+  recordWrongAnswers,
+  RetryContext,
+} from '@/lib/storage';
+import { useExamLoader } from '@/hooks/useExamLoader';
+import { useExamTimer } from '@/hooks/useExamTimer';
+import { useExamKeyboard } from '@/hooks/useExamKeyboard';
 import QuestionCard from './QuestionCard';
 import ExamHeader from './ExamHeader';
 import QuestionNav from './QuestionNav';
@@ -25,6 +36,9 @@ export default function ExamView() {
   const wrongOf = searchParams.get('wrong');
   const pool = searchParams.get('pool'); // 'wrong-pool' | 'bookmarks'
 
+  const { questions: loadedQuestions, initialAnswers, initialRetryContext, examKey } =
+    useExamLoader({ mode, id, sessionParam, wrongOf, pool });
+
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -32,70 +46,38 @@ export default function ExamView() {
   const [shownExplanations, setShownExplanations] = useState<Set<string>>(new Set());
   const [checkedQuestions, setCheckedQuestions] = useState<Set<string>>(new Set());
   const [passedQuestions, setPassedQuestions] = useState<Set<string>>(new Set());
-  const [timeElapsed, setTimeElapsed] = useState(0);
   const [result, setResult] = useState<ExamResult | null>(null);
   const [retryContext, setRetryContext] = useState<RetryContext | null>(null);
 
   const submitRef = useRef<(() => void) | undefined>(undefined);
+  const timeElapsedRef = useRef(0);
 
+  // Sync loader output into local state, resetting transient exam state on mode/id change
   useEffect(() => {
-    // Reset all exam state
+    setQuestions(loadedQuestions);
+    setAnswers(initialAnswers);
+    setRetryContext(initialRetryContext);
     setCurrentIndex(0);
     setPhase('exam');
     setShownExplanations(new Set());
     setCheckedQuestions(new Set());
     setPassedQuestions(new Set());
-    setTimeElapsed(0);
     setResult(null);
+  }, [loadedQuestions, initialAnswers, initialRetryContext]);
 
-    setRetryContext(null);
+  const { timeElapsed, timeRemaining } = useExamTimer({
+    active: phase === 'exam' && questions.length > 0,
+    timeLimit: TIME_LIMIT,
+    onTimeout: () => submitRef.current?.(),
+  });
 
-    let loaded: Question[] = [];
-    if (pool === 'wrong-pool') {
-      loaded = getQuestionsByIds(getActiveWrongIds());
-    } else if (pool === 'bookmarks') {
-      loaded = getQuestionsByIds(getBookmarks());
-    } else if (wrongOf) {
-      const ids = getWrongIds(wrongOf);
-      loaded = getQuestionsByIds(ids);
-      setRetryContext(getRetryContext(wrongOf) ?? null);
-    } else if (mode === 'session') {
-      loaded = getQuestionsBySession(id);
-    } else if (mode === 'subject') {
-      if (sessionParam) {
-        loaded = getQuestionsBySubjectAndSession(parseInt(id, 10), sessionParam);
-      } else {
-        loaded = getQuestionsBySubject(parseInt(id, 10));
-      }
-    } else {
-      loaded = getAllQuestions();
-    }
-    setQuestions(loaded);
-
-    // Restore saved answers if available
-    let key: string;
-    if (pool === 'wrong-pool') key = 'pool-wrong';
-    else if (pool === 'bookmarks') key = 'pool-bookmarks';
-    else if (wrongOf) key = wrongOf;
-    else if (mode === 'session') key = `session-${id}`;
-    else if (mode === 'subject' && sessionParam) key = `subject-${id}-${sessionParam}`;
-    else key = 'all';
-    const saved = getExamAnswers(key);
-    setAnswers(saved ?? {});
-  }, [mode, id, sessionParam, wrongOf, pool]);
-
-  const examKey = useMemo(() => {
-    if (pool === 'wrong-pool') return 'pool-wrong';
-    if (pool === 'bookmarks') return 'pool-bookmarks';
-    if (wrongOf) return wrongOf;
-    if (mode === 'session') return `session-${id}`;
-    if (mode === 'subject' && sessionParam) return `subject-${id}-${sessionParam}`;
-    return 'all';
-  }, [mode, id, sessionParam, wrongOf, pool]);
+  useEffect(() => {
+    timeElapsedRef.current = timeElapsed;
+  }, [timeElapsed]);
 
   const doSubmit = useCallback(() => {
     if (questions.length === 0) return;
-    const r = calculateResult(questions, answers, timeElapsed, retryContext ?? undefined);
+    const r = calculateResult(questions, answers, timeElapsedRef.current, retryContext ?? undefined);
     setResult(r);
     setPhase('result');
 
@@ -120,45 +102,21 @@ export default function ExamView() {
       const ctx = buildRetryContext(questions, answers, retryContext);
       saveRetryContext(examKey, ctx);
     }
-  }, [questions, answers, timeElapsed, examKey, retryContext]);
+  }, [questions, answers, examKey, retryContext]);
 
   submitRef.current = doSubmit;
 
-  useEffect(() => {
-    if (phase !== 'exam' || questions.length === 0) return;
-    const interval = setInterval(() => {
-      setTimeElapsed(prev => {
-        if (prev + 1 >= TIME_LIMIT) {
-          submitRef.current?.();
-          return prev + 1;
-        }
-        return prev + 1;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [phase, questions.length]);
-
-  useEffect(() => {
-    if (phase !== 'exam' && phase !== 'review') return;
-
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-        e.preventDefault();
-        setCurrentIndex(prev => Math.max(0, prev - 1));
-      } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-        e.preventDefault();
-        setCurrentIndex(prev => Math.min(questions.length - 1, prev + 1));
-      } else if (phase === 'exam' && ['1', '2', '3', '4'].includes(e.key)) {
-        const q = questions[currentIndex];
-        if (q) {
-          setAnswers(prev => ({ ...prev, [q.id]: parseInt(e.key, 10) }));
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [phase, questions, currentIndex]);
+  useExamKeyboard({
+    active: phase === 'exam' || phase === 'review',
+    questionCount: questions.length,
+    currentIndex,
+    acceptAnswerKeys: phase === 'exam',
+    setCurrentIndex,
+    onAnswerKey: answer => {
+      const q = questions[currentIndex];
+      if (q) setAnswers(prev => ({ ...prev, [q.id]: answer }));
+    },
+  });
 
   const handleAnswer = useCallback(
     (answer: number) => {
@@ -280,7 +238,6 @@ export default function ExamView() {
 
   const answeredCount = Object.keys(answers).length;
   const currentQuestion = questions[currentIndex];
-  const timeRemaining = Math.max(0, TIME_LIMIT - timeElapsed);
 
   const title = useMemo(() => {
     if (pool === 'wrong-pool') return '오답노트';
@@ -323,7 +280,6 @@ export default function ExamView() {
     setShownExplanations(new Set());
     setCheckedQuestions(new Set());
     setPassedQuestions(new Set());
-    setTimeElapsed(0);
     setResult(null);
   }, [examKey]);
 
@@ -339,7 +295,6 @@ export default function ExamView() {
     setShownExplanations(new Set());
     setCheckedQuestions(new Set());
     setPassedQuestions(new Set());
-    setTimeElapsed(0);
     setResult(null);
   }, [questions, answers, retryContext]);
 
