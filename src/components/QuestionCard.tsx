@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Question } from '@/types';
 import { questionImages, explanationImages } from '@/data/images';
 import { isBookmarked, toggleBookmark } from '@/lib/storage';
+import MathText from './MathText';
 
 interface QuestionCardProps {
   question: Question;
@@ -40,7 +41,7 @@ export default function QuestionCard({
       if (selectedAnswer === optionNum) {
         return `${base} border-blue-500 bg-blue-50`;
       }
-      return `${base} border-gray-200 hover:border-blue-300 hover:bg-blue-50/30 cursor-pointer`;
+      return `${base} border-gray-200 dark:border-slate-800 hover:border-blue-300 hover:bg-blue-50/30 cursor-pointer`;
     }
 
     const isCorrect = optionNum === question.answer;
@@ -48,15 +49,15 @@ export default function QuestionCard({
 
     if (isCorrect) return `${base} border-green-500 bg-green-50`;
     if (isSelected && !isCorrect) return `${base} border-red-500 bg-red-50`;
-    return `${base} border-gray-200 opacity-60`;
+    return `${base} border-gray-200 dark:border-slate-800 opacity-60`;
   };
 
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="flex items-start gap-2">
-        <div className="flex-1 text-base sm:text-lg leading-relaxed text-gray-900">
+        <div className="flex-1 text-base sm:text-lg leading-relaxed text-gray-900 dark:text-slate-100">
           <span className="text-blue-600 font-bold mr-2">Q{question.number}.</span>
-          <span className="font-medium whitespace-pre-wrap">{question.question}</span>
+          <MathText text={question.question} className="font-medium" />
         </div>
         <button
           type="button"
@@ -66,7 +67,7 @@ export default function QuestionCard({
           className={`flex-shrink-0 w-9 h-9 rounded-lg border transition flex items-center justify-center text-lg ${
             bookmarked
               ? 'border-yellow-400 bg-yellow-50 text-yellow-500 hover:bg-yellow-100'
-              : 'border-gray-200 bg-white text-gray-300 hover:text-yellow-500 hover:border-yellow-300'
+              : 'border-gray-200 dark:border-slate-800 bg-white text-gray-300 dark:text-slate-600 hover:text-yellow-500 hover:border-yellow-300'
           }`}
         >
           {bookmarked ? '★' : '☆'}
@@ -76,7 +77,7 @@ export default function QuestionCard({
       {images.length > 0 && (
         <div className="space-y-3">
           {images.map((url, idx) => (
-            <div key={idx} className="rounded-lg overflow-hidden border border-gray-200 bg-white">
+            <div key={idx} className="rounded-lg overflow-hidden border border-gray-200 dark:border-slate-800 bg-white">
               <img
                 src={url}
                 alt={`문제 ${question.number} 참고 이미지 ${idx + 1}`}
@@ -101,7 +102,7 @@ export default function QuestionCard({
               <span className="inline-flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gray-100 text-xs sm:text-sm font-bold flex-shrink-0">
                 {optionNum}
               </span>
-              <span className="text-sm sm:text-base text-gray-800 pt-0.5">{option}</span>
+              <MathText text={option} className="text-sm sm:text-base text-gray-800 dark:text-slate-100 pt-0.5" />
               {(isSubmitted || showExplanation) && optionNum === question.answer && (
                 <span className="ml-auto text-green-600 font-bold flex-shrink-0">O</span>
               )}
@@ -118,9 +119,10 @@ export default function QuestionCard({
       {(isSubmitted || showExplanation) && (
         <div className="p-3 sm:p-4 bg-amber-50 border border-amber-200 rounded-lg space-y-3">
           <div className="font-bold text-amber-800 mb-1 text-sm sm:text-base">해설</div>
-          <div className="text-amber-900 leading-relaxed whitespace-pre-wrap text-sm sm:text-base">
-            {question.explanation}
-          </div>
+          <MathText
+            text={question.explanation}
+            className="text-amber-900 leading-relaxed text-sm sm:text-base block"
+          />
           {explImages.length > 0 && (
             <div className="space-y-2 pt-2">
               {explImages.map((url, idx) => (

@@ -115,7 +115,7 @@ export default function Dashboard({ history, answersMap }: DashboardProps) {
 
   return (
     <section className="space-y-3 sm:space-y-4">
-      <h2 className="text-lg sm:text-xl font-bold text-gray-800">학습 대시보드</h2>
+      <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-slate-100">학습 대시보드</h2>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4">
         {/* Pass prediction */}
@@ -127,10 +127,10 @@ export default function Dashboard({ history, answersMap }: DashboardProps) {
                 ? 'bg-yellow-50 border-yellow-200'
                 : prediction.status === 'fail-likely'
                   ? 'bg-red-50 border-red-200'
-                  : 'bg-gray-50 border-gray-200'
+                  : 'bg-gray-50 dark:bg-slate-950 border-gray-200 dark:border-slate-800'
           }`}
         >
-          <div className="text-xs sm:text-sm font-bold text-gray-500 mb-2">
+          <div className="text-xs sm:text-sm font-bold text-gray-500 dark:text-slate-400 mb-2">
             합격 예측
           </div>
           <div
@@ -141,12 +141,12 @@ export default function Dashboard({ history, answersMap }: DashboardProps) {
                   ? 'text-yellow-600'
                   : prediction.status === 'fail-likely'
                     ? 'text-red-600'
-                    : 'text-gray-500'
+                    : 'text-gray-500 dark:text-slate-400'
             }`}
           >
             {prediction.status === 'unknown' ? '-' : `${prediction.score}점`}
           </div>
-          <div className="text-xs sm:text-sm text-gray-600 mt-2">
+          <div className="text-xs sm:text-sm text-gray-600 dark:text-slate-400 mt-2">
             {prediction.status === 'pass-likely' && '합격권 — 페이스 유지'}
             {prediction.status === 'borderline' && '경계권 — 약점 보강 필요'}
             {prediction.status === 'fail-likely' && (
@@ -159,19 +159,19 @@ export default function Dashboard({ history, answersMap }: DashboardProps) {
         </div>
 
         {/* Recent score trend */}
-        <div className="p-4 sm:p-6 rounded-xl border bg-white border-gray-200 lg:col-span-2">
-          <div className="text-xs sm:text-sm font-bold text-gray-500 mb-3">
+        <div className="p-4 sm:p-6 rounded-xl border bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-800 lg:col-span-2">
+          <div className="text-xs sm:text-sm font-bold text-gray-500 dark:text-slate-400 mb-3">
             최근 회차별 성적 (최대 7회)
           </div>
           {trend.length === 0 ? (
-            <div className="text-xs sm:text-sm text-gray-400 py-6 text-center">
+            <div className="text-xs sm:text-sm text-gray-400 dark:text-slate-500 py-6 text-center">
               아직 풀이 기록이 없어요
             </div>
           ) : (
             <div className="flex items-end gap-1.5 sm:gap-2 h-28 sm:h-32">
               {trend.map((t, idx) => (
                 <div key={idx} className="flex-1 flex flex-col items-center gap-1">
-                  <div className="text-[10px] sm:text-xs font-bold text-gray-700">
+                  <div className="text-[10px] sm:text-xs font-bold text-gray-700 dark:text-slate-300">
                     {t.score}
                   </div>
                   <div className="w-full bg-gray-100 rounded-t flex items-end h-full">
@@ -182,7 +182,7 @@ export default function Dashboard({ history, answersMap }: DashboardProps) {
                       style={{ height: `${Math.max(t.score, 4)}%` }}
                     />
                   </div>
-                  <div className="text-[10px] sm:text-xs text-gray-400 truncate w-full text-center">
+                  <div className="text-[10px] sm:text-xs text-gray-400 dark:text-slate-500 truncate w-full text-center">
                     {t.label}
                   </div>
                 </div>
@@ -193,14 +193,14 @@ export default function Dashboard({ history, answersMap }: DashboardProps) {
       </div>
 
       {/* Per-subject accuracy */}
-      <div className="p-4 sm:p-6 rounded-xl border bg-white border-gray-200">
-        <div className="text-xs sm:text-sm font-bold text-gray-500 mb-3">
+      <div className="p-4 sm:p-6 rounded-xl border bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-800">
+        <div className="text-xs sm:text-sm font-bold text-gray-500 dark:text-slate-400 mb-3">
           과목별 정답률 (누적 풀이 기준)
         </div>
         <div className="space-y-2 sm:space-y-3">
           {subjectStats.map(s => (
             <div key={s.id} className="flex items-center gap-3">
-              <div className="text-xs sm:text-sm font-medium text-gray-700 w-32 sm:w-40 truncate">
+              <div className="text-xs sm:text-sm font-medium text-gray-700 dark:text-slate-300 w-32 sm:w-40 truncate">
                 {s.id}과목 · {s.name}
               </div>
               <div className="flex-1 h-2 sm:h-2.5 bg-gray-100 rounded-full overflow-hidden">
@@ -220,7 +220,7 @@ export default function Dashboard({ history, answersMap }: DashboardProps) {
               <div
                 className={`text-xs sm:text-sm font-bold w-14 sm:w-16 text-right ${
                   s.total === 0
-                    ? 'text-gray-300'
+                    ? 'text-gray-300 dark:text-slate-600'
                     : s.passed
                       ? 'text-blue-600'
                       : 'text-red-600'
@@ -231,7 +231,7 @@ export default function Dashboard({ history, answersMap }: DashboardProps) {
             </div>
           ))}
         </div>
-        <div className="text-[10px] sm:text-xs text-gray-400 mt-3">
+        <div className="text-[10px] sm:text-xs text-gray-400 dark:text-slate-500 mt-3">
           과목당 40점 미만은 과락 위험. 합격: 평균 60 + 모든 과목 40 이상.
         </div>
       </div>

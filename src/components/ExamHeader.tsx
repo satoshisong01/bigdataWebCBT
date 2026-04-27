@@ -28,29 +28,29 @@ export default function ExamHeader({
   isSubmitted,
 }: ExamHeaderProps) {
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-20">
+    <header className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 sticky top-0 z-20">
       {/* Desktop: single row */}
       <div className="hidden sm:flex items-center justify-between px-4 sm:px-6 py-3">
         <div className="flex items-center gap-4">
           <button
             onClick={onHome}
-            className="text-gray-400 hover:text-gray-600 transition text-sm"
+            className="text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:text-slate-400 transition text-sm"
           >
             &larr; 홈
           </button>
-          <h1 className="text-lg font-bold text-gray-900 truncate max-w-xs">
+          <h1 className="text-lg font-bold text-gray-900 dark:text-slate-100 truncate max-w-xs">
             {title}
           </h1>
-          <span className="text-sm text-gray-400">
+          <span className="text-sm text-gray-400 dark:text-slate-500">
             {currentIndex + 1} / {totalQuestions}
           </span>
         </div>
 
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2 text-sm">
-            <span className="text-gray-500">답변</span>
+            <span className="text-gray-500 dark:text-slate-400">답변</span>
             <span className="font-bold text-blue-600">{answeredCount}</span>
-            <span className="text-gray-400">/ {totalQuestions}</span>
+            <span className="text-gray-400 dark:text-slate-500">/ {totalQuestions}</span>
           </div>
 
           {(checkedCorrect > 0 || checkedWrong > 0) && (
@@ -64,7 +64,7 @@ export default function ExamHeader({
             <>
               <div
                 className={`font-mono text-lg font-bold tabular-nums ${
-                  timeRemaining < 600 ? 'text-red-600 animate-pulse' : 'text-gray-700'
+                  timeRemaining < 600 ? 'text-red-600 animate-pulse' : 'text-gray-700 dark:text-slate-300'
                 }`}
               >
                 {formatTime(timeRemaining)}
@@ -92,11 +92,11 @@ export default function ExamHeader({
           <div className="flex items-center gap-2 min-w-0">
             <button
               onClick={onHome}
-              className="text-gray-400 hover:text-gray-600 transition text-sm flex-shrink-0"
+              className="text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:text-slate-400 transition text-sm flex-shrink-0"
             >
               &larr;
             </button>
-            <h1 className="text-sm font-bold text-gray-900 truncate">
+            <h1 className="text-sm font-bold text-gray-900 dark:text-slate-100 truncate">
               {title}
             </h1>
           </div>
@@ -104,7 +104,7 @@ export default function ExamHeader({
             {!isSubmitted && (
               <div
                 className={`font-mono text-sm font-bold tabular-nums ${
-                  timeRemaining < 600 ? 'text-red-600 animate-pulse' : 'text-gray-700'
+                  timeRemaining < 600 ? 'text-red-600 animate-pulse' : 'text-gray-700 dark:text-slate-300'
                 }`}
               >
                 {formatTime(timeRemaining)}
@@ -119,7 +119,7 @@ export default function ExamHeader({
         </div>
 
         <div className="flex items-center justify-between px-3 pb-2">
-          <div className="flex items-center gap-3 text-xs text-gray-500">
+          <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-slate-400">
             <span className="font-medium">
               {currentIndex + 1}/{totalQuestions}
             </span>

@@ -48,7 +48,7 @@ export default function QuestionNav({
       }
       if (isCorrect) return 'bg-green-100 text-green-800 border-green-300';
       if (isAnswered) return 'bg-red-100 text-red-800 border-red-300';
-      return 'bg-gray-100 text-gray-400 border-gray-200';
+      return 'bg-gray-100 text-gray-400 dark:text-slate-500 border-gray-200 dark:border-slate-800';
     }
 
     if (passedIds?.has(qId)) {
@@ -69,14 +69,14 @@ export default function QuestionNav({
 
     if (isCurrent) return 'bg-blue-600 text-white ring-2 ring-blue-300';
     if (isAnswered) return 'bg-blue-100 text-blue-800 border-blue-300';
-    return 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50';
+    return 'bg-white text-gray-600 dark:text-slate-400 border-gray-300 dark:border-slate-700 hover:bg-gray-50 dark:bg-slate-950';
   };
 
   return (
     <div className="space-y-4">
       {groups.map(([subjectId, { name, indices }]) => (
         <div key={subjectId}>
-          <div className="text-xs font-bold text-gray-500 mb-2 truncate" title={name}>
+          <div className="text-xs font-bold text-gray-500 dark:text-slate-400 mb-2 truncate" title={name}>
             {subjectId}과목
           </div>
           <div className="grid grid-cols-5 gap-1.5">
@@ -94,7 +94,7 @@ export default function QuestionNav({
       ))}
 
       {isSubmitted && correctAnswers && (
-        <div className="pt-3 border-t border-gray-200 text-xs text-gray-500 space-y-1">
+        <div className="pt-3 border-t border-gray-200 dark:border-slate-800 text-xs text-gray-500 dark:text-slate-400 space-y-1">
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded bg-green-100 border border-green-300" />
             정답
@@ -104,7 +104,7 @@ export default function QuestionNav({
             오답
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded bg-gray-100 border border-gray-200" />
+            <span className="w-3 h-3 rounded bg-gray-100 border border-gray-200 dark:border-slate-800" />
             미응답
           </div>
         </div>
