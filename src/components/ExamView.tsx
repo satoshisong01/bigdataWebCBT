@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Question, ExamResult } from '@/types';
 import { calculateResult, buildRetryContext } from '@/lib/utils';
 import { getQuestionsBySession, getQuestionsBySubject, getQuestionsBySubjectAndSession, getQuestionsByIds, getAllQuestions } from '@/data';
-import { saveRecord, saveWrongIds, getWrongIds, saveExamAnswers, getExamAnswers, clearExamAnswers, saveRetryContext, getRetryContext, clearRetryContext, RetryContext } from '@/lib/storage';
+import { saveRecord, saveWrongIds, getWrongIds, saveExamAnswers, getExamAnswers, clearExamAnswers, saveRetryContext, getRetryContext, clearRetryContext, recordWrongAnswers, getActiveWrongIds, getBookmarks, RetryContext } from '@/lib/storage';
 import QuestionCard from './QuestionCard';
 import ExamHeader from './ExamHeader';
 import QuestionNav from './QuestionNav';
@@ -23,6 +23,7 @@ export default function ExamView() {
   const id = searchParams.get('id') ?? '';
   const sessionParam = searchParams.get('session');
   const wrongOf = searchParams.get('wrong');
+  const pool = searchParams.get('pool'); // 'wrong-pool' | 'bookmarks'
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<Record<string, number>>({});
@@ -50,7 +51,11 @@ export default function ExamView() {
     setRetryContext(null);
 
     let loaded: Question[] = [];
-    if (wrongOf) {
+    if (pool === 'wrong-pool') {
+      loaded = getQuestionsByIds(getActiveWrongIds());
+    } else if (pool === 'bookmarks') {
+      loaded = getQuestionsByIds(getBookmarks());
+    } else if (wrongOf) {
       const ids = getWrongIds(wrongOf);
       loaded = getQuestionsByIds(ids);
       setRetryContext(getRetryContext(wrongOf) ?? null);
@@ -69,20 +74,24 @@ export default function ExamView() {
 
     // Restore saved answers if available
     let key: string;
-    if (wrongOf) key = wrongOf;
+    if (pool === 'wrong-pool') key = 'pool-wrong';
+    else if (pool === 'bookmarks') key = 'pool-bookmarks';
+    else if (wrongOf) key = wrongOf;
     else if (mode === 'session') key = `session-${id}`;
     else if (mode === 'subject' && sessionParam) key = `subject-${id}-${sessionParam}`;
     else key = 'all';
     const saved = getExamAnswers(key);
     setAnswers(saved ?? {});
-  }, [mode, id, sessionParam, wrongOf]);
+  }, [mode, id, sessionParam, wrongOf, pool]);
 
   const examKey = useMemo(() => {
+    if (pool === 'wrong-pool') return 'pool-wrong';
+    if (pool === 'bookmarks') return 'pool-bookmarks';
     if (wrongOf) return wrongOf;
     if (mode === 'session') return `session-${id}`;
     if (mode === 'subject' && sessionParam) return `subject-${id}-${sessionParam}`;
     return 'all';
-  }, [mode, id, sessionParam, wrongOf]);
+  }, [mode, id, sessionParam, wrongOf, pool]);
 
   const doSubmit = useCallback(() => {
     if (questions.length === 0) return;
@@ -102,6 +111,10 @@ export default function ExamView() {
       .map(q => q.id);
     saveWrongIds(examKey, wrongIds);
     saveExamAnswers(examKey, answers);
+
+    // Update global wrong-stats pool (for spaced repetition)
+    const attempted = questions.filter(q => answers[q.id] !== undefined).map(q => q.id);
+    recordWrongAnswers(wrongIds, attempted);
 
     if (wrongIds.length > 0) {
       const ctx = buildRetryContext(questions, answers, retryContext);
@@ -270,6 +283,8 @@ export default function ExamView() {
   const timeRemaining = Math.max(0, TIME_LIMIT - timeElapsed);
 
   const title = useMemo(() => {
+    if (pool === 'wrong-pool') return '오답노트';
+    if (pool === 'bookmarks') return '북마크 모음';
     const prefix = wrongOf ? '오답 다시풀기 - ' : '';
     if (wrongOf) {
       const first = questions[0];
@@ -283,7 +298,7 @@ export default function ExamView() {
       return `${prefix}${subjectName} - ${session}`;
     }
     return '전체 문제';
-  }, [mode, questions, sessionParam, wrongOf]);
+  }, [mode, questions, sessionParam, wrongOf, pool]);
 
   const currentUrl = useMemo(() => {
     const params = new URLSearchParams();

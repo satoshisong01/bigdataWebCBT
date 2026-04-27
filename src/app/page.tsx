@@ -4,13 +4,17 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { SESSIONS } from '@/data';
 import { SUBJECTS } from '@/data/subjects';
-import { getHistory, getWrongIds, ExamRecord } from '@/lib/storage';
+import { getHistory, getWrongIds, getActiveWrongIds, getBookmarks, clearAllWrongStats, ExamRecord } from '@/lib/storage';
 
 export default function HomePage() {
   const [history, setHistory] = useState<ExamRecord[]>([]);
+  const [wrongPoolCount, setWrongPoolCount] = useState(0);
+  const [bookmarkCount, setBookmarkCount] = useState(0);
 
   useEffect(() => {
     setHistory(getHistory());
+    setWrongPoolCount(getActiveWrongIds().length);
+    setBookmarkCount(getBookmarks().length);
   }, []);
 
   const getRecord = (key: string) => history.find(r => r.key === key);
@@ -40,6 +44,55 @@ export default function HomePage() {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-8 sm:space-y-12">
+        {/* 학습 풀 (오답노트 + 북마크) */}
+        {(wrongPoolCount > 0 || bookmarkCount > 0) && (
+          <section>
+            <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">학습 풀</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              {wrongPoolCount > 0 && (
+                <Link
+                  href="/exam?pool=wrong-pool"
+                  className="block p-4 sm:p-6 bg-white rounded-xl border border-red-200 hover:border-red-300 hover:bg-red-50/30 active:bg-red-50 transition group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-base sm:text-lg font-bold text-gray-800 group-hover:text-red-600 transition">
+                        오답노트
+                      </div>
+                      <div className="text-xs sm:text-sm text-gray-400 mt-1">
+                        전 회차 누적 오답 · 자주 틀린 순 정렬
+                      </div>
+                    </div>
+                    <span className="text-2xl sm:text-3xl font-black text-red-500">
+                      {wrongPoolCount}
+                    </span>
+                  </div>
+                </Link>
+              )}
+              {bookmarkCount > 0 && (
+                <Link
+                  href="/exam?pool=bookmarks"
+                  className="block p-4 sm:p-6 bg-white rounded-xl border border-yellow-200 hover:border-yellow-300 hover:bg-yellow-50/30 active:bg-yellow-50 transition group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-base sm:text-lg font-bold text-gray-800 group-hover:text-yellow-600 transition">
+                        ★ 북마크
+                      </div>
+                      <div className="text-xs sm:text-sm text-gray-400 mt-1">
+                        문제 풀이 중 ☆ 클릭하여 추가
+                      </div>
+                    </div>
+                    <span className="text-2xl sm:text-3xl font-black text-yellow-500">
+                      {bookmarkCount}
+                    </span>
+                  </div>
+                </Link>
+              )}
+            </div>
+          </section>
+        )}
+
         {/* 회차별 풀기 */}
         <section>
           <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">회차별 풀기</h2>
@@ -170,19 +223,34 @@ export default function HomePage() {
         </section>
 
         {/* 기록 초기화 */}
-        {completedCount > 0 && (
-          <div className="text-center pb-4">
-            <button
-              onClick={() => {
-                if (confirm('모든 풀이 기록을 초기화하시겠습니까?')) {
-                  localStorage.removeItem('bigdata-cbt-history');
-                  setHistory([]);
-                }
-              }}
-              className="text-xs sm:text-sm text-gray-400 hover:text-red-500 active:text-red-600 transition"
-            >
-              풀이 기록 초기화
-            </button>
+        {(completedCount > 0 || wrongPoolCount > 0) && (
+          <div className="text-center pb-4 flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center">
+            {completedCount > 0 && (
+              <button
+                onClick={() => {
+                  if (confirm('모든 풀이 기록을 초기화하시겠습니까?')) {
+                    localStorage.removeItem('bigdata-cbt-history');
+                    setHistory([]);
+                  }
+                }}
+                className="text-xs sm:text-sm text-gray-400 hover:text-red-500 active:text-red-600 transition"
+              >
+                풀이 기록 초기화
+              </button>
+            )}
+            {wrongPoolCount > 0 && (
+              <button
+                onClick={() => {
+                  if (confirm('오답노트를 초기화하시겠습니까?')) {
+                    clearAllWrongStats();
+                    setWrongPoolCount(0);
+                  }
+                }}
+                className="text-xs sm:text-sm text-gray-400 hover:text-red-500 active:text-red-600 transition"
+              >
+                오답노트 초기화
+              </button>
+            )}
           </div>
         )}
       </div>

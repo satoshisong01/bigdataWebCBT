@@ -1,7 +1,9 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Question } from '@/types';
 import { questionImages, explanationImages } from '@/data/images';
+import { isBookmarked, toggleBookmark } from '@/lib/storage';
 
 interface QuestionCardProps {
   question: Question;
@@ -20,6 +22,16 @@ export default function QuestionCard({
 }: QuestionCardProps) {
   const images = questionImages[question.id] ?? [];
   const explImages = explanationImages[question.id] ?? [];
+
+  const [bookmarked, setBookmarked] = useState(false);
+  useEffect(() => {
+    setBookmarked(isBookmarked(question.id));
+  }, [question.id]);
+
+  const handleBookmark = () => {
+    const next = toggleBookmark(question.id);
+    setBookmarked(next);
+  };
 
   const getOptionClass = (optionNum: number): string => {
     const base = 'w-full text-left p-3 sm:p-4 rounded-lg border-2 transition-all flex items-start gap-2.5 sm:gap-3 active:scale-[0.98]';
@@ -41,9 +53,24 @@ export default function QuestionCard({
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="text-base sm:text-lg leading-relaxed text-gray-900">
-        <span className="text-blue-600 font-bold mr-2">Q{question.number}.</span>
-        <span className="font-medium whitespace-pre-wrap">{question.question}</span>
+      <div className="flex items-start gap-2">
+        <div className="flex-1 text-base sm:text-lg leading-relaxed text-gray-900">
+          <span className="text-blue-600 font-bold mr-2">Q{question.number}.</span>
+          <span className="font-medium whitespace-pre-wrap">{question.question}</span>
+        </div>
+        <button
+          type="button"
+          onClick={handleBookmark}
+          aria-label={bookmarked ? '북마크 해제' : '북마크 추가'}
+          title={bookmarked ? '북마크 해제' : '북마크 추가'}
+          className={`flex-shrink-0 w-9 h-9 rounded-lg border transition flex items-center justify-center text-lg ${
+            bookmarked
+              ? 'border-yellow-400 bg-yellow-50 text-yellow-500 hover:bg-yellow-100'
+              : 'border-gray-200 bg-white text-gray-300 hover:text-yellow-500 hover:border-yellow-300'
+          }`}
+        >
+          {bookmarked ? '★' : '☆'}
+        </button>
       </div>
 
       {images.length > 0 && (
