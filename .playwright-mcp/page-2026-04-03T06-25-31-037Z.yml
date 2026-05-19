@@ -1,0 +1,73 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e4]:
+      - banner [ref=e6]:
+        - generic [ref=e8]:
+          - link "기본 로고" [ref=e9] [cursor=pointer]:
+            - /url: /
+            - img "기본 로고" [ref=e10]
+            - paragraph
+          - generic [ref=e11]:
+            - button "로그인" [ref=e12] [cursor=pointer]
+            - button "메뉴 열기 버튼" [ref=e13] [cursor=pointer]:
+              - img "메뉴 열기 버튼" [ref=e14]
+      - generic [ref=e16]:
+        - generic [ref=e18]:
+          - generic [ref=e19]:
+            - generic [ref=e20]:
+              - generic [ref=e22]: 빅데이터분석기사 필기
+              - generic [ref=e25]: 로그인해주세요
+            - generic [ref=e26]: 로그인하고 문제풀이 기록, 오답노트를 이용해보세요
+          - button "로그인" [ref=e30] [cursor=pointer]
+        - generic [ref=e32]:
+          - generic [ref=e34]:
+            - button "과목별 풀이" [ref=e35] [cursor=pointer]:
+              - img [ref=e37]
+              - generic [ref=e43]: 과목별 풀이
+            - button "랜덤 모의고사" [ref=e44] [cursor=pointer]:
+              - img [ref=e46]
+              - generic [ref=e54]: 랜덤 모의고사
+            - button "시험성적" [ref=e55] [cursor=pointer]:
+              - img [ref=e57]
+              - generic [ref=e65]: 시험성적
+            - button "오답노트" [ref=e66] [cursor=pointer]:
+              - img [ref=e68]
+              - generic [ref=e76]: 오답노트
+            - button "저장한문제" [ref=e77] [cursor=pointer]:
+              - img [ref=e79]
+              - generic [ref=e84]: 저장한문제
+            - button "문제검색" [ref=e85] [cursor=pointer]:
+              - img [ref=e87]
+              - generic [ref=e92]: 문제검색
+            - button "오늘의문제" [ref=e93] [cursor=pointer]:
+              - img [ref=e95]
+              - generic [ref=e102]: 오늘의문제
+            - button "맞춤학습" [ref=e103] [cursor=pointer]:
+              - img [ref=e105]
+              - generic [ref=e116]: 맞춤학습
+          - generic [ref=e118]:
+            - generic [ref=e119]: 회차별 기출문제
+            - button "전체 회차 확인하기" [ref=e124] [cursor=pointer]:
+              - img [ref=e125]
+              - text: 전체 회차 확인하기
+          - generic [ref=e138]:
+            - generic [ref=e140]: 나의 학습 분석
+            - generic [ref=e141]:
+              - generic [ref=e142]:
+                - generic [ref=e143]:
+                  - generic [ref=e144]:
+                    - generic [ref=e145]: 정답률
+                    - generic [ref=e146]: 단위
+                  - generic [ref=e149]:
+                    - generic [ref=e150]: 로그인해야 확인할 수 있어요
+                    - button "로그인하고 분석받기" [ref=e154] [cursor=pointer]
+                - generic [ref=e155]:
+                  - generic [ref=e156]:
+                    - generic [ref=e157]: 푼 문제 수
+                    - generic [ref=e158]: "(단위: 개)"
+                  - generic [ref=e161]:
+                    - generic [ref=e162]: 로그인해야 확인할 수 있어요
+                    - button "로그인하고 분석받기" [ref=e166] [cursor=pointer]
+              - generic [ref=e167]: "* 공부한 날을 기준으로 계산했어요"
+    - region "Notifications alt+T"
+  - alert [ref=e168]

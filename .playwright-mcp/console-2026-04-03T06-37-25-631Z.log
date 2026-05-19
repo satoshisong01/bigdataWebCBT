@@ -1,0 +1,44 @@
+[     114ms] [WARNING] The key "maximum-scale-1.0" is not recognized and ignored. @ https://www.machuda.kr/:0
+[     235ms] [INFO] [Notifly] Notifly SDK is not initialized. Requested command will be executed as soon as the SDK is initialized. @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[     236ms] [INFO] [Notifly] Notifly SDK is not initialized. Requested command will be executed as soon as the SDK is initialized. @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[     238ms] [LOG] 🔍 [getPartnerNameByDomain] 입력: {hostname: www.machuda.kr, normalized: www.machuda.kr} @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[     238ms] [LOG]   ❌ 결과: null @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[     255ms] [INFO] [Notifly] Notifly SDK is not initialized. Requested command will be executed as soon as the SDK is initialized. @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[     262ms] [INFO] [Notifly] Notifly SDK is not initialized. Requested command will be executed as soon as the SDK is initialized. @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[     262ms] [INFO] [Notifly] Notifly SDK is not initialized. Requested command will be executed as soon as the SDK is initialized. @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[     264ms] [WARNING] <meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes"> @ https://www.machuda.kr/:0
+[   41607ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://www.machuda.kr/login:0
+[   41611ms] [WARNING] The key "maximum-scale-1.0" is not recognized and ignored. @ https://www.machuda.kr/login:0
+[   41679ms] [INFO] [Notifly] Notifly SDK is not initialized. Requested command will be executed as soon as the SDK is initialized. @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   41679ms] [LOG] 🔍 [getPartnerNameByDomain] 입력: {hostname: www.machuda.kr, normalized: www.machuda.kr} @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   41679ms] [LOG]   ❌ 결과: null @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   41681ms] [LOG] 🔍 [getPartnerNameByDomain] 입력: {hostname: www.machuda.kr, normalized: www.machuda.kr} @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   41682ms] [LOG]   ❌ 결과: null @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   41697ms] [INFO] [Notifly] Notifly SDK is not initialized. Requested command will be executed as soon as the SDK is initialized. @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   41702ms] [INFO] [Notifly] Notifly SDK is not initialized. Requested command will be executed as soon as the SDK is initialized. @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   41702ms] [INFO] [Notifly] Notifly SDK is not initialized. Requested command will be executed as soon as the SDK is initialized. @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   41708ms] [WARNING] <meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes"> @ https://www.machuda.kr/login:0
+[   41730ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://www.machuda.kr/_next/data/EKOtV6a4_P7RdAk61IAmy/login.json:0
+[   41753ms] [LOG] 🔍 [getPartnerNameByDomain] 입력: {hostname: www.machuda.kr, normalized: www.machuda.kr} @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   41753ms] [LOG]   ❌ 결과: null @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   53043ms] [WARNING] The key "maximum-scale-1.0" is not recognized and ignored. @ https://www.machuda.kr/learning/certification/%EB%B9%85%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B6%84%EC%84%9D%EA%B8%B0%EC%82%AC/written/pastExam/practice/study?page=1&pastExamId=2048&title=2021%EB%85%84%EB%8F%84%202%ED%9A%8C%EC%B0%A8:0
+[   53121ms] [INFO] [Notifly] Notifly SDK is not initialized. Requested command will be executed as soon as the SDK is initialized. @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   53145ms] [INFO] [Notifly] Notifly SDK is not initialized. Requested command will be executed as soon as the SDK is initialized. @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   53146ms] [INFO] [Notifly] Notifly SDK is not initialized. Requested command will be executed as soon as the SDK is initialized. @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   53151ms] [WARNING] <meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes"> @ https://www.machuda.kr/learning/certification/%EB%B9%85%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B6%84%EC%84%9D%EA%B8%B0%EC%82%AC/written/pastExam/practice/study?page=1&pastExamId=2048&title=2021%EB%85%84%EB%8F%84%202%ED%9A%8C%EC%B0%A8:0
+[   53159ms] [INFO] [Notifly] Notifly SDK is not initialized. Requested command will be executed as soon as the SDK is initialized. @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   53160ms] [LOG] 🔍 [getPartnerNameByDomain] 입력: {hostname: www.machuda.kr, normalized: www.machuda.kr} @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   53160ms] [LOG]   ❌ 결과: null @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   53167ms] [INFO] [Notifly] Notifly SDK is not initialized. Requested command will be executed as soon as the SDK is initialized. @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   57117ms] [ERROR] `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   57117ms] [WARNING] Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}. @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   91808ms] [ERROR] `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0
+[   91808ms] [WARNING] Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}. @ https://www.machuda.kr/_next/static/chunks/pages/_app-4df02a410eaa6a00.js:0

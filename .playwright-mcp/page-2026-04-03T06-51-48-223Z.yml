@@ -1,0 +1,22 @@
+- generic [active] [ref=e1]:
+  - generic:
+    - generic [ref=e2]:
+      - generic [ref=e4]:
+        - paragraph [ref=e5]: 회차별 기출문제
+        - button [ref=e6] [cursor=pointer]:
+          - img [ref=e7]
+      - generic [ref=e18]:
+        - generic [ref=e20]: 연도별 기출문제
+        - generic [ref=e23]:
+          - generic:
+            - button:
+              - img
+          - generic:
+            - button:
+              - img
+          - generic [ref=e24]:
+            - button "전체연도" [ref=e25] [cursor=pointer]
+            - button "최근 5개년" [ref=e26] [cursor=pointer]
+        - generic [ref=e30]: 기출문제가 없습니다.
+    - region "Notifications alt+T"
+  - alert [ref=e31]

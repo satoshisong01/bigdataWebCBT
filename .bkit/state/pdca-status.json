@@ -1,0 +1,447 @@
+{
+  "version": "3.0",
+  "lastUpdated": "2026-05-19T06:06:55.058Z",
+  "activeFeatures": [
+    "sessions",
+    "bigdata",
+    "scripts",
+    "public"
+  ],
+  "primaryFeature": "sessions",
+  "features": {
+    "sessions": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-04-27T06:04:54.259Z",
+        "lastUpdated": "2026-04-27T06:05:28.490Z"
+      },
+      "lastFile": "C:\\Users\\jungm\\Desktop\\myprojects\\bigdata\\src\\data\\sessions\\8.ts"
+    },
+    "bigdata": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-04-27T06:12:37.269Z",
+        "lastUpdated": "2026-05-19T06:06:55.056Z"
+      },
+      "lastFile": "C:\\Users\\jungm\\Desktop\\myprojects\\bigdata\\src\\app\\page.tsx"
+    },
+    "scripts": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-04-27T06:35:07.560Z",
+        "lastUpdated": "2026-04-27T06:35:07.560Z"
+      },
+      "lastFile": "C:\\Users\\jungm\\Desktop\\myprojects\\bigdata\\scripts\\dark-variants.js"
+    },
+    "public": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-05-19T06:05:17.648Z",
+        "lastUpdated": "2026-05-19T06:05:17.648Z"
+      },
+      "lastFile": "C:\\Users\\jungm\\Desktop\\myprojects\\bigdata\\public\\sw.js"
+    }
+  },
+  "pipeline": {
+    "currentPhase": 1,
+    "level": "Dynamic",
+    "phaseHistory": []
+  },
+  "session": {
+    "startedAt": "2026-04-09T01:52:20.677Z",
+    "onboardingCompleted": false,
+    "lastActivity": "2026-05-19T06:06:55.058Z"
+  },
+  "history": [
+    {
+      "timestamp": "2026-04-27T06:04:54.260Z",
+      "feature": "sessions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:04:54.866Z",
+      "feature": "sessions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:05:05.774Z",
+      "feature": "sessions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:05:09.628Z",
+      "feature": "sessions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:05:13.126Z",
+      "feature": "sessions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:05:28.492Z",
+      "feature": "sessions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:12:37.271Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:12:46.220Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:12:55.785Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:13:24.159Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:13:34.480Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:13:44.356Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:14:04.134Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:14:15.804Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:15:05.922Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:15:16.228Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:16:06.894Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:16:20.903Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:16:32.080Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:18:39.252Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:19:28.141Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:19:47.252Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:19:58.666Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:20:19.728Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:24:09.935Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:24:32.609Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:24:43.652Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:26:25.305Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:26:57.969Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:27:31.168Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:27:38.147Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:28:05.771Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:28:58.420Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:31:20.012Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:31:27.753Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:31:35.967Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:32:01.537Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:32:10.281Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:32:47.117Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:33:33.988Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:33:42.652Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:34:15.339Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:35:07.562Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:37:06.967Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:37:40.950Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:38:12.115Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:38:20.880Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:38:44.396Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:39:12.428Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:39:45.619Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:39:54.817Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-27T06:40:02.879Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-19T06:05:17.650Z",
+      "feature": "public",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-19T06:05:26.141Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-19T06:06:04.133Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-19T06:06:27.673Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-19T06:06:35.997Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-19T06:06:45.386Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-19T06:06:55.058Z",
+      "feature": "bigdata",
+      "phase": "do",
+      "action": "updated"
+    }
+  ],
+  "stateMachine": {
+    "defaultWorkflow": "default",
+    "activeWorkflows": {},
+    "totalTransitions": 0
+  },
+  "automation": {
+    "globalLevel": 2,
+    "trustScore": 40,
+    "pendingApprovals": 0,
+    "lastGateResult": null
+  },
+  "team": {
+    "enabled": true,
+    "stateFile": ".bkit/runtime/agent-state.json",
+    "eventsFile": ".bkit/runtime/agent-events.jsonl"
+  }
+}

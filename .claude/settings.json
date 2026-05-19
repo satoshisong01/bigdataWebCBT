@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__playwright__browser_run_code",
+      "Read(//c/Users/jungm/.claude/projects/c--Users-jungm-Desktop-myprojects-bigdata/c57ef308-7534-4214-8c86-19e2eec79b9d/tool-results/**)",
+      "Bash(python3 -c \" import json, sys raw = json.load\\(sys.stdin\\) data = json.loads\\(raw[0]['text'].split\\('### Result\\\\n'\\)[1].split\\('\\\\n### Ran'\\)[0].strip\\(\\).strip\\('\\\\\"'\\).replace\\('\\\\\\\\\\\\\\\\n', '\\\\n'\\).replace\\('\\\\\\\\\\\\\\\\\\\\\"', '\\\\\"'\\)\\) for k,v in data.items\\(\\): print\\(f'{k}회: {len\\(v\\)} questions, answer0_count={sum\\(1 for q in v if q[\\\\\"ans\\\\\"]==0\\)}'\\) if v: print\\(f' Q1: {v[0][\\\\\"q\\\\\"][:60]}'\\) \")",
+      "Bash(node -e ':*)",
+      "Read(//c/Users/jungm/.claude/projects/c--Users-jungm-Desktop-myprojects-bigdata/c57ef308-7534-4214-8c86-19e2eec79b9d/tool-results\" 2>/dev/**)",
+      "Read(//c/tmp/**)",
+      "Read(//c/Users/jungm/AppData/Local/Temp/**)",
+      "Bash(node /c/Users/jungm/Desktop/myprojects/bigdata/scripts/convert.js)",
+      "Bash(npm run:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)",
+      "mcp__playwright__browser_take_screenshot",
+      "Bash(node /c/Users/jungm/Desktop/myprojects/bigdata/scripts/parse-images.js)",
+      "Bash(node /c/Users/jungm/Desktop/myprojects/bigdata/scripts/add-session2-images.js)",
+      "Bash(node /c/Users/jungm/Desktop/myprojects/bigdata/scripts/split-images.js)",
+      "Bash(git commit:*)",
+      "Bash(taskkill //F //IM \"node.exe\")"
+    ]
+  }
+}

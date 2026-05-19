@@ -1,0 +1,93 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e499]:
+      - generic [ref=e500]:
+        - generic [ref=e502]:
+          - generic [ref=e504]: 2021년도 2회차
+          - button [ref=e506] [cursor=pointer]:
+            - img [ref=e507]
+        - generic [ref=e510]:
+          - generic [ref=e511]:
+            - button [ref=e512] [cursor=pointer]:
+              - img [ref=e513]
+            - button [ref=e515] [cursor=pointer]:
+              - img [ref=e516]
+          - generic [ref=e518]:
+            - button "기본" [ref=e521] [cursor=pointer]:
+              - generic [ref=e522]: 기본
+              - img [ref=e523]
+            - button "정답모드" [ref=e525] [cursor=pointer]:
+              - generic:
+                - generic:
+                  - generic:
+                    - switch
+              - generic [ref=e526]: 정답모드
+            - generic [ref=e527]:
+              - button "OFF" [ref=e528] [cursor=pointer]:
+                - generic [ref=e529]: "OFF"
+              - button "풀이이력" [ref=e531] [cursor=pointer]:
+                - generic [ref=e532]: 풀이이력
+              - button "화면분할" [ref=e533] [cursor=pointer]:
+                - generic [ref=e534]: 화면분할
+      - generic [ref=e543]:
+        - generic [ref=e544]:
+          - generic [ref=e545]:
+            - generic [ref=e546]: "1."
+            - generic [ref=e547]: 빅데이터분석기획
+          - generic [ref=e548]:
+            - button "문제 신고" [ref=e549] [cursor=pointer]:
+              - img [ref=e550]
+              - text: 문제 신고
+            - button "문제 정보" [ref=e554] [cursor=pointer]:
+              - img [ref=e555]
+              - text: 문제 정보
+        - generic [ref=e561]:
+          - generic [ref=e563]: 다음 중 수집 대상 데이터를 추출, 가공하여 데이터 웨어하우스 및 데이터 마트에 저장하는 기술은 무엇인가?
+          - generic [ref=e565]:
+            - button "1 ETL" [ref=e566] [cursor=pointer]:
+              - generic [ref=e567]:
+                - generic [ref=e568]: "1"
+                - generic [ref=e569]: ETL
+            - button "2 CEP" [ref=e570] [cursor=pointer]:
+              - generic [ref=e571]:
+                - generic [ref=e572]: "2"
+                - generic [ref=e573]: CEP
+            - button "3 EAI" [ref=e574] [cursor=pointer]:
+              - generic [ref=e575]:
+                - generic [ref=e576]: "3"
+                - generic [ref=e577]: EAI
+            - button "4 ODS" [ref=e578] [cursor=pointer]:
+              - generic [ref=e579]:
+                - generic [ref=e580]: "4"
+                - generic [ref=e581]: ODS
+      - generic [ref=e587]:
+        - generic [ref=e588]:
+          - generic [ref=e589]:
+            - generic [ref=e590]: "1"
+            - generic [ref=e591]: / 80
+          - button "문제선택" [ref=e594] [cursor=pointer]
+        - generic [ref=e595]:
+          - button "이전문제" [disabled] [ref=e596]:
+            - img [ref=e597]
+            - text: 이전문제
+          - button "다음문제" [ref=e601] [cursor=pointer]:
+            - text: 다음문제
+            - img [ref=e602]
+    - region "Notifications alt+T"
+  - alert [ref=e168]: 자격증 필기, 실기 기출 CBT 합격 | 맞추다
+  - dialog "미로그인 저장불가 안내" [ref=e614]:
+    - generic [ref=e615]:
+      - banner [ref=e616]:
+        - heading "미로그인 저장불가 안내" [level=2] [ref=e619]
+        - button [active] [ref=e620] [cursor=pointer]:
+          - img [ref=e621]
+      - generic [ref=e625]:
+        - generic [ref=e626]: 미로그인 시 기록이 저장되지 않습니다.
+        - generic [ref=e627]: 학습 기록을 남기고 싶다면 로그인 해주세요.
+    - generic [ref=e628]:
+      - generic [ref=e629]:
+        - button "그냥 풀기" [ref=e632] [cursor=pointer]
+        - button "로그인" [ref=e635] [cursor=pointer]
+      - button "오늘 하루 보지 않기" [ref=e637] [cursor=pointer]:
+        - img [ref=e638]
+        - text: 오늘 하루 보지 않기

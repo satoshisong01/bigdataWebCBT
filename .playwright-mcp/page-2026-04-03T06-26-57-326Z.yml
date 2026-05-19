@@ -1,0 +1,135 @@
+- generic [active] [ref=e1]:
+  - generic:
+    - generic [ref=e258]:
+      - generic [ref=e260]:
+        - paragraph [ref=e261]: 회차별 기출문제
+        - button [ref=e262] [cursor=pointer]:
+          - img [ref=e263]
+      - generic [ref=e274]:
+        - generic [ref=e276]: 연도별 기출문제
+        - generic [ref=e279]:
+          - generic:
+            - button:
+              - img
+          - generic:
+            - button:
+              - img
+          - generic [ref=e280]:
+            - button "전체연도" [ref=e281] [cursor=pointer]
+            - button "최근 5개년" [ref=e282] [cursor=pointer]
+            - button "2024" [ref=e283] [cursor=pointer]
+            - button "2023" [ref=e284] [cursor=pointer]
+            - button "2022" [ref=e285] [cursor=pointer]
+            - button "2021" [ref=e286] [cursor=pointer]
+        - generic [ref=e288]:
+          - generic [ref=e289]:
+            - generic [ref=e290]: 2024년도
+            - generic [ref=e292]:
+              - generic [ref=e293]: 2024년도 8회차
+              - generic [ref=e294]:
+                - generic [ref=e297]:
+                  - img [ref=e298]
+                  - generic [ref=e303]: 0%
+                - generic [ref=e305]: 푼 문제 0 / 전체 80
+              - generic [ref=e306]:
+                - button "연습모드" [ref=e309] [cursor=pointer]:
+                  - img [ref=e310]
+                  - text: 연습모드
+                - button "시험모드" [ref=e315] [cursor=pointer]:
+                  - img [ref=e316]
+                  - text: 시험모드
+          - generic [ref=e320]:
+            - generic [ref=e321]: 2023년도
+            - generic [ref=e322]:
+              - generic [ref=e323]:
+                - generic [ref=e324]: 2023년도 6회차
+                - generic [ref=e325]:
+                  - generic [ref=e328]:
+                    - img [ref=e329]
+                    - generic [ref=e334]: 0%
+                  - generic [ref=e336]: 푼 문제 0 / 전체 80
+                - generic [ref=e337]:
+                  - button "연습모드" [ref=e340] [cursor=pointer]:
+                    - img [ref=e341]
+                    - text: 연습모드
+                  - button "시험모드" [ref=e346] [cursor=pointer]:
+                    - img [ref=e347]
+                    - text: 시험모드
+              - generic [ref=e351]:
+                - generic [ref=e352]: 2023년도 7회차
+                - generic [ref=e353]:
+                  - generic [ref=e356]:
+                    - img [ref=e357]
+                    - generic [ref=e362]: 0%
+                  - generic [ref=e364]: 푼 문제 0 / 전체 80
+                - generic [ref=e365]:
+                  - button "연습모드" [ref=e368] [cursor=pointer]:
+                    - img [ref=e369]
+                    - text: 연습모드
+                  - button "시험모드" [ref=e374] [cursor=pointer]:
+                    - img [ref=e375]
+                    - text: 시험모드
+          - generic [ref=e379]:
+            - generic [ref=e380]: 2022년도
+            - generic [ref=e381]:
+              - generic [ref=e382]:
+                - generic [ref=e383]: 2022년도 4회차
+                - generic [ref=e384]:
+                  - generic [ref=e387]:
+                    - img [ref=e388]
+                    - generic [ref=e393]: 0%
+                  - generic [ref=e395]: 푼 문제 0 / 전체 80
+                - generic [ref=e396]:
+                  - button "연습모드" [ref=e399] [cursor=pointer]:
+                    - img [ref=e400]
+                    - text: 연습모드
+                  - button "시험모드" [ref=e405] [cursor=pointer]:
+                    - img [ref=e406]
+                    - text: 시험모드
+              - generic [ref=e410]:
+                - generic [ref=e411]: 2022년도 5회차
+                - generic [ref=e412]:
+                  - generic [ref=e415]:
+                    - img [ref=e416]
+                    - generic [ref=e421]: 0%
+                  - generic [ref=e423]: 푼 문제 0 / 전체 80
+                - generic [ref=e424]:
+                  - button "연습모드" [ref=e427] [cursor=pointer]:
+                    - img [ref=e428]
+                    - text: 연습모드
+                  - button "시험모드" [ref=e433] [cursor=pointer]:
+                    - img [ref=e434]
+                    - text: 시험모드
+          - generic [ref=e438]:
+            - generic [ref=e439]: 2021년도
+            - generic [ref=e440]:
+              - generic [ref=e441]:
+                - generic [ref=e442]: 2021년도 2회차
+                - generic [ref=e443]:
+                  - generic [ref=e446]:
+                    - img [ref=e447]
+                    - generic [ref=e452]: 0%
+                  - generic [ref=e454]: 푼 문제 0 / 전체 80
+                - generic [ref=e455]:
+                  - button "연습모드" [ref=e458] [cursor=pointer]:
+                    - img [ref=e459]
+                    - text: 연습모드
+                  - button "시험모드" [ref=e464] [cursor=pointer]:
+                    - img [ref=e465]
+                    - text: 시험모드
+              - generic [ref=e469]:
+                - generic [ref=e470]: 2021년도 3회차
+                - generic [ref=e471]:
+                  - generic [ref=e474]:
+                    - img [ref=e475]
+                    - generic [ref=e480]: 0%
+                  - generic [ref=e482]: 푼 문제 0 / 전체 80
+                - generic [ref=e483]:
+                  - button "연습모드" [ref=e486] [cursor=pointer]:
+                    - img [ref=e487]
+                    - text: 연습모드
+                  - button "시험모드" [ref=e492] [cursor=pointer]:
+                    - img [ref=e493]
+                    - text: 시험모드
+    - region "Notifications alt+T"
+  - alert [ref=e168]: 자격증 필기, 실기 기출 CBT 합격 | 맞추다

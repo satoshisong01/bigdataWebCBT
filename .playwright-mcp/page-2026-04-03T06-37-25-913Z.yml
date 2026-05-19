@@ -1,0 +1,152 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e4]:
+      - banner [ref=e6]:
+        - generic [ref=e8]:
+          - link "기본 로고" [ref=e9] [cursor=pointer]:
+            - /url: /
+            - img "기본 로고" [ref=e10]
+            - paragraph
+          - generic [ref=e11]:
+            - link "프리미엄 상점" [ref=e12] [cursor=pointer]:
+              - /url: /premium
+              - img "프리미엄 상점" [ref=e13]
+            - button "로그인" [ref=e14] [cursor=pointer]
+            - button "메뉴 열기 버튼" [ref=e15] [cursor=pointer]:
+              - img "메뉴 열기 버튼" [ref=e16]
+      - main [ref=e18]:
+        - heading "자격증은 맞추다 기출문제부터 취약점 보완까지" [level=1] [ref=e21]:
+          - paragraph [ref=e23]: 자격증은 맞추다
+          - generic [ref=e24]:
+            - paragraph [ref=e25]: 기출문제부터
+            - paragraph [ref=e26]: 취약점 보완까지
+        - generic [ref=e27]:
+          - paragraph [ref=e28]: 어떤 공부 하시나요?
+          - generic [ref=e29]:
+            - link "자격증 공부하러 가기" [ref=e30] [cursor=pointer]:
+              - /url: /learning/certification
+              - paragraph [ref=e31]: 자격증
+              - paragraph [ref=e32]: 공부하러 가기
+            - link "공무원 공부하러 가기" [ref=e33] [cursor=pointer]:
+              - /url: /learning/public-servant
+              - paragraph [ref=e34]: 공무원
+              - paragraph [ref=e35]: 공부하러 가기
+            - link "매경TEST 공부하러 가기 박스 기출 문제 최초 공개" [ref=e36] [cursor=pointer]:
+              - /url: /learning/mk/%EB%A7%A4%EA%B2%BDTEST/written
+              - paragraph [ref=e37]: 매경TEST
+              - paragraph [ref=e38]: 공부하러 가기
+              - generic [ref=e40]:
+                - img "박스" [ref=e41]
+                - paragraph [ref=e42]: 기출 문제 최초 공개
+        - generic [ref=e43]:
+          - generic [ref=e44]:
+            - generic [ref=e45]:
+              - paragraph [ref=e46]: 디지털화 된 학습,
+              - paragraph [ref=e47]: 합격기간을 단축시킵니다
+              - paragraph [ref=e48]: 맞추다는 자격증 에듀테크 서비스로 수많은 문제들을 데이터화 시켜뒀어요.
+              - paragraph [ref=e49]: 매일매일 자신이 설정한 목표대로 커스텀 문제집이 생성돼요.
+              - paragraph [ref=e50]: 취약점을 보완하며 공부하면서 합격에 한 발짝 더 다가가 보세요.
+            - img "서비스 목업" [ref=e51]
+          - generic [ref=e52]:
+            - img "서비스 목업" [ref=e53]
+            - generic [ref=e54]:
+              - paragraph [ref=e55]: 즉각적인 반응이 일어나는
+              - paragraph [ref=e56]: 인터렉티브 문제집을 제공합니다
+              - paragraph [ref=e57]: 맞추다는 문제를 하나하나 풀 때마다 정답과 해설을 바로 제공하며,
+              - paragraph [ref=e58]: 자신의 학습 스타일을 분석해 줍니다.
+              - paragraph [ref=e59]: 이를 통해 보다 빠르고 효율적인 학습을 진행해 보세요.
+        - generic [ref=e61]:
+          - paragraph [ref=e62]: 맞추다 핵심 기능
+          - paragraph [ref=e63]: 맞추다를 사용해 다음과 같은 기능을 적극 활용해보세요!
+          - generic [ref=e64]:
+            - generic [ref=e65]:
+              - generic [ref=e66]:
+                - paragraph [ref=e67]: "01"
+                - img "기능 아이콘1" [ref=e70]
+                - generic [ref=e71]:
+                  - paragraph [ref=e72]: 자동 채점
+                  - paragraph [ref=e73]: 종이책처럼 일일이 답지를 찾아 채점하지 않아도 되고, 다른 전자책처럼 답지 파일을 따로 받지 않아도 돼요. 클릭 한 번이면 바로 채점이 되니까요!
+              - generic [ref=e74]:
+                - paragraph [ref=e75]: "02"
+                - img "기능 아이콘2" [ref=e78]
+                - generic [ref=e79]:
+                  - paragraph [ref=e80]: 전문가 해설
+                  - paragraph [ref=e81]: ‘이 문제 어떻게 풀지?’, ‘이 해설 괜찮은건가?’ 이제 고민하지 마세요. 각 분야 최고의 전문가들이 직접 작성한 프리미엄 해설을 통해 공부해보세요!
+            - generic [ref=e82]:
+              - generic [ref=e83]:
+                - paragraph [ref=e84]: "03"
+                - img "기능 아이콘3" [ref=e87]
+                - generic [ref=e88]:
+                  - paragraph [ref=e89]: 오답노트 자동 생성
+                  - paragraph [ref=e90]: 매번 틀린 문제를 옮겨 적는 아까운 시간은 이제 그만! 맞추다가 자동으로 생성해주는 오답노트로 시간을 아껴드릴게요.
+              - generic [ref=e91]:
+                - paragraph [ref=e92]: "04"
+                - img "기능 아이콘4" [ref=e95]
+                - generic [ref=e96]:
+                  - paragraph [ref=e97]: 맞춤학습(개인화 학습)
+                  - paragraph [ref=e98]: 매일 몇 문제를 공부할지 고민하지 마세요. 사용자의 공부 습관에 맞게 원하는 문제와 과목을 선택하여 공부할 수 있어요.
+            - generic [ref=e99]:
+              - generic [ref=e100]:
+                - paragraph [ref=e101]: "05"
+                - img "기능 아이콘5" [ref=e104]
+                - generic [ref=e105]:
+                  - paragraph [ref=e106]: 풀이 이력 분석
+                  - paragraph [ref=e107]: 공부를 하다가 잘하고 있나, 열심히 하고 있나 걱정되던 적이 있나요? 맞추다가 풀이 이력을 분석해 내 실력은 어느 정도인지, 얼마나 열심히 했는지 알려드릴게요!
+              - generic [ref=e108]:
+                - paragraph [ref=e109]: "06"
+                - img "기능 아이콘6" [ref=e112]
+                - generic [ref=e113]:
+                  - paragraph [ref=e114]: 기출 문제 회독 시스템
+                  - paragraph [ref=e115]: 어디까지 풀었는지, 어떤 문제를 풀 건지 고민하지 마세요! 공부할 때마다 학습 진도를 확인하지 마세요! 맞추다가 자동으로 알려드릴게요.
+        - generic [ref=e116]:
+          - generic [ref=e117]:
+            - paragraph [ref=e118]: 맞추다 사용 후기
+            - paragraph [ref=e119]: 자사 내 데이터 분석 결과,
+            - paragraph [ref=e120]: 많은 분들이 맞추다 서비스에 만족하고 있어요.
+            - paragraph [ref=e121]: 10명 중 8.6명의 사용자 분들이 합격권에 진입하셨어요.
+          - generic [ref=e123]:
+            - generic [ref=e124]:
+              - generic [ref=e125]:
+                - paragraph [ref=e126]: ☺
+                - paragraph [ref=e127]: 져***
+              - paragraph [ref=e128]: 너무 유용합니다!
+              - paragraph [ref=e129]: 전기기사 기출문제를 쉽게 불러와 문제풀이가 가능해서 좋았어요. 문제가 년도별로 정리되어 있어서 좋았구요. 실제 시험처럼 타이머 놓고 풀어보는 기능 덕에 따로 타이머 맞추지 않아도 되서 효율적이었습니다. 1,2개년 정도만 있지 않고 과거 시험부터 많이 준비되어있어서 다양한 문제 풀며 실력을 쌓아나갈 수 있어서 전기기사 준비하는데 정말 도움 많이 되었습니다!!
+            - generic [ref=e130]:
+              - generic [ref=e131]:
+                - paragraph [ref=e132]: 🛏
+                - paragraph [ref=e133]: 옥**
+              - paragraph [ref=e134]: 합격하면 맞추다 어플 덕분입니다
+              - paragraph [ref=e135]: 맞추다 어플 덕분에 집에 와서 혹은 자기전 침대누워서 복습할수있어서 좋네요..필기 합격하면 맞추다 어플 덕분입니다 감사합니다
+          - button "리뷰 더보기 리뷰 더 보기" [ref=e136] [cursor=pointer]:
+            - text: 리뷰 더보기
+            - img "리뷰 더 보기" [ref=e137]
+        - generic [ref=e138]:
+          - generic [ref=e139]:
+            - generic [ref=e140]:
+              - paragraph [ref=e141]: 협력사
+              - paragraph [ref=e142]: PARTNERS
+            - generic [ref=e143]:
+              - img "세화 출판" [ref=e144]
+              - img "한솔" [ref=e145]
+              - img "천재교육" [ref=e146]
+              - img "매경 출판" [ref=e147]
+              - img "매경 미디어 그룹" [ref=e148]
+              - img "디캠프" [ref=e149]
+              - img "문라이트" [ref=e150]
+              - img "팁스" [ref=e151]
+              - img "구글 플레이" [ref=e152]
+              - img "다락원" [ref=e153]
+              - img "에라온교육" [ref=e154]
+          - generic [ref=e155]:
+            - paragraph [ref=e156]: 합격을 위한 가장 빠른 길
+            - paragraph [ref=e157]: 맞추다를 지금 바로 시작해보세요
+            - link "공부하러 가기" [ref=e158] [cursor=pointer]:
+              - /url: /learning
+          - generic [ref=e161]:
+            - generic [ref=e162]:
+              - text: "주식회사 맞추다(MACHUDA Inc.) | 대표자:이윤규 | 사업자번호:419-81-02652 | 통신판매업 신고번호: 제 2023-서울강남-00918 호 | 주소: 서울특별시 강남구 역삼로 165, 702호 (역삼동, 해성빌딩) | 이메일: service@machuda.kr |"
+              - link "채팅으로 문의하기" [ref=e164] [cursor=pointer]:
+                - /url: https://machuda.channel.io/
+            - generic [ref=e165]: © 2022. Machuda Inc. All Rights Reserved
+    - region "Notifications alt+T"
+  - alert [ref=e166]
