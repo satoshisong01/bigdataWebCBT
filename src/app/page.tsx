@@ -8,6 +8,7 @@ import { getHistory, getWrongIds, getActiveWrongIds, getBookmarks, getAllExamAns
 import Dashboard from '@/components/Dashboard';
 import ThemeToggle from '@/components/ThemeToggle';
 import StreakBadge from '@/components/StreakBadge';
+import DailyReminder from '@/components/DailyReminder';
 
 export default function HomePage() {
   const [history, setHistory] = useState<ExamRecord[]>([]);
@@ -59,6 +60,9 @@ export default function HomePage() {
 
         {/* 학습 스트릭 */}
         <StreakBadge streak={streak} />
+
+        {/* 오늘의 학습 알림 */}
+        <DailyReminder />
 
         {/* 학습 풀 (오답노트 + 북마크) */}
         {(wrongPoolCount > 0 || bookmarkCount > 0) && (
