@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
 import './globals.css';
 import ServiceWorkerRegister from '@/components/ServiceWorkerRegister';
+import SyncProvider from '@/components/SyncProvider';
 
 const notoSansKR = Noto_Sans_KR({
   subsets: ['latin'],
@@ -55,6 +56,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col font-sans">
         <ServiceWorkerRegister />
+        <SyncProvider />
         {children}
       </body>
     </html>

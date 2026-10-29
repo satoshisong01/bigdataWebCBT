@@ -1,7 +1,8 @@
 // Service Worker for bigdata-cbt PWA
 // Strategy: Cache-first for static assets, network-first for HTML, falls back to cache offline.
+// /api/ requests are never intercepted.
 
-const CACHE_VERSION = 'bigdata-cbt-v1';
+const CACHE_VERSION = 'bigdata-cbt-v2';
 const PRECACHE = [
   '/',
   '/manifest.webmanifest',
@@ -31,6 +32,9 @@ self.addEventListener('fetch', (event) => {
 
   // Skip cross-origin (Google Storage images, fonts) — go straight to network
   if (url.origin !== self.location.origin) return;
+
+  // Auth/sync API: always straight to the network, never cached (login state and sync data change per request)
+  if (url.pathname.startsWith('/api/')) return;
 
   const isHtml = req.headers.get('accept')?.includes('text/html');
 
