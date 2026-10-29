@@ -4,6 +4,7 @@ import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import ThemeToggle from '@/components/ThemeToggle';
+import UpdatesBell from '@/components/UpdatesBell';
 import { SESSIONS, TOTAL_QUESTIONS } from '@/data/catalog';
 
 /** Size-matched placeholder while the client-only chip loads. */
@@ -21,7 +22,7 @@ const AccountChip = dynamic(() => import('./AccountChip'), { ssr: false, loading
 export default function HomeHeader() {
   return (
     <header className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex flex-wrap items-center gap-x-3 gap-y-2">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex flex-wrap items-center gap-x-2 sm:gap-x-3 gap-y-2">
         <div className="min-w-0 flex-1">
           <h1 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tight truncate">
             빅데이터분석기사 필기
@@ -35,6 +36,7 @@ export default function HomeHeader() {
             <AccountChip />
           </Suspense>
         </div>
+        <UpdatesBell />
         <Link
           href="/settings"
           aria-label="설정"

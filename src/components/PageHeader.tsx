@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import ThemeToggle from './ThemeToggle';
+import UpdatesBell from './UpdatesBell';
 
 interface PageHeaderProps {
   title: string;
@@ -30,6 +31,7 @@ export default function PageHeader({ title, subtitle, backHref = '/', right }: P
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           {right}
+          <UpdatesBell />
           <ThemeToggle />
         </div>
       </div>
