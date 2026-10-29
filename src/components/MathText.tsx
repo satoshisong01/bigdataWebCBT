@@ -51,8 +51,9 @@ export default function MathText({ text, className }: MathTextProps) {
           continue;
         }
       }
-      // Plain text segment up to next `$`
-      const next = text.indexOf('$', i);
+      // Plain text segment up to the next `$`. Searching from i + 1 keeps an unmatched `$`
+      // (only possible at text[i] here) as a literal instead of never advancing.
+      const next = text.indexOf('$', i + 1);
       const slice = next === -1 ? text.slice(i) : text.slice(i, next);
       parts.push(escapeHtml(slice).replace(/\n/g, '<br/>'));
       i = next === -1 ? text.length : next;

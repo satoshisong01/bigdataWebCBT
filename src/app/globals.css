@@ -10,6 +10,8 @@ body {
   background: #f8fafc;
   color: #0f172a;
   -webkit-tap-highlight-color: transparent;
+  /* long unbroken terms (e.g. "LeNet·AlexNet·VGGNet") wrap instead of widening the page on phones */
+  overflow-wrap: break-word;
 }
 
 html.dark body {

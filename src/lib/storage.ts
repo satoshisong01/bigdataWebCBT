@@ -182,51 +182,9 @@ export function getWrongStats(): Record<string, WrongStat> {
   }
 }
 
-function saveWrongStats(stats: Record<string, WrongStat>): void {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.setItem(WRONG_STATS_KEY, JSON.stringify(stats));
-  } catch { /* ignore */ }
-}
-
-export function recordWrongAnswers(wrongIds: readonly string[], allAttemptedIds: readonly string[]): void {
-  if (typeof window === 'undefined') return;
-  const stats = getWrongStats();
-  const wrongSet = new Set(wrongIds);
-  const now = new Date().toISOString();
-  for (const qId of allAttemptedIds) {
-    const cur = stats[qId];
-    if (wrongSet.has(qId)) {
-      stats[qId] = {
-        wrongCount: (cur?.wrongCount ?? 0) + 1,
-        lastWrongAt: now,
-        graduated: false,
-      };
-    } else if (cur && !cur.graduated) {
-      stats[qId] = { ...cur, graduated: true };
-    }
-  }
-  saveWrongStats(stats);
-}
-
-export function getActiveWrongIds(): string[] {
-  const stats = getWrongStats();
-  return Object.entries(stats)
-    .filter(([, s]) => !s.graduated && s.wrongCount > 0)
-    .sort((a, b) => b[1].wrongCount - a[1].wrongCount)
-    .map(([id]) => id);
-}
-
 export function clearAllWrongStats(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(WRONG_STATS_KEY);
-}
-
-export interface SubjectAccuracy {
-  subject: number;
-  attempted: number;
-  correct: number;
-  accuracy: number;
 }
 
 const STREAK_KEY = 'bigdata-cbt-streak';
@@ -313,17 +271,4 @@ export function recordStudyToday(): StreakData {
     localStorage.setItem(STREAK_KEY, JSON.stringify(next));
   } catch { /* ignore */ }
   return next;
-}
-
-export function getSubjectAccuracyFromAttempts(
-  attemptsBySubject: Record<number, { correct: number; total: number }>,
-): SubjectAccuracy[] {
-  return Object.entries(attemptsBySubject)
-    .map(([id, data]) => ({
-      subject: Number(id),
-      attempted: data.total,
-      correct: data.correct,
-      accuracy: data.total > 0 ? Math.round((data.correct / data.total) * 100) : 0,
-    }))
-    .sort((a, b) => a.subject - b.subject);
 }

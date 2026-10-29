@@ -1,77 +1,126 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { Question } from '@/types';
-import {
-  getQuestionsBySession,
-  getQuestionsBySubject,
-  getQuestionsBySubjectAndSession,
-  getQuestionsByIds,
-  getAllQuestions,
-} from '@/data';
-import {
-  getActiveWrongIds,
-  getBookmarks,
-  getWrongIds,
-  getRetryContext,
-  getExamAnswers,
-  RetryContext,
-} from '@/lib/storage';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import type { Question } from '@/types';
+import { loadQuestionsByIds } from '@/data/bank';
+import { withCriteriaSubject } from '@/lib/compose';
+import { getComposedIds, saveComposedIds } from '@/lib/composed';
+import { newSeed } from '@/lib/rng';
+import { needsSeed, parseExamParams, type ExamParams, type ExamSource, type ExamSourceKind } from './exam/params';
+import { loadExam, type EmptyReason, type ExamLoadOutcome } from './exam/sources';
+import { createRun, type ExamRun } from './exam/run';
 
-export interface ExamLoaderParams {
-  mode: string;
-  id: string;
-  sessionParam: string | null;
-  wrongOf: string | null;
-  pool: string | null;
+export type ExamLoaderState =
+  | { status: 'loading'; params: ExamParams }
+  | { status: 'empty'; params: ExamParams; reason: EmptyReason }
+  | { status: 'error'; params: ExamParams; detail: string; reload: () => void }
+  | { status: 'ready'; params: ExamParams; loadId: string; run: ExamRun };
+
+type Settled =
+  | { key: string; kind: 'ready'; run: ExamRun }
+  | { key: string; kind: 'empty'; reason: EmptyReason }
+  | { key: string; kind: 'error'; detail: string };
+
+function describeError(err: unknown): string {
+  return err instanceof Error ? err.message : String(err);
 }
 
-export interface ExamLoaderResult {
-  questions: Question[];
-  initialAnswers: Record<string, number>;
-  initialRetryContext: RetryContext | null;
-  examKey: string;
+/** Composed sets whose question list is pinned per exam key. review / wrong-pool stay dynamic on purpose. */
+const PINNED_KINDS: ReadonlySet<ExamSourceKind> = new Set<ExamSourceKind>(['mock', 'weak', 'topic']);
+
+/** Seeded pools keep their option order on reload (as loadExam does); a topic set reshuffles each visit. */
+function optionSeed(source: ExamSource): number {
+  return (source.kind === 'mock' || source.kind === 'weak') && source.seed !== null ? source.seed : newSeed();
 }
 
-function buildExamKey({ mode, id, sessionParam, wrongOf, pool }: ExamLoaderParams): string {
-  if (pool === 'wrong-pool') return 'pool-wrong';
-  if (pool === 'bookmarks') return 'pool-bookmarks';
-  if (wrongOf) return wrongOf;
-  if (mode === 'session') return `session-${id}`;
-  if (mode === 'subject' && sessionParam) return `subject-${id}-${sessionParam}`;
-  return 'all';
+function withQuestions(run: ExamRun, questions: readonly Question[], seed: number): ExamRun {
+  return createRun({
+    examKey: run.examKey,
+    title: run.title,
+    strict: run.strict,
+    shuffleSetting: run.shuffled,
+    questions,
+    initialAnswers: run.initialAnswers,
+    retryContext: run.retryContext,
+    seed,
+  });
 }
 
-function loadQuestions({ mode, id, sessionParam, wrongOf, pool }: ExamLoaderParams): Question[] {
-  if (pool === 'wrong-pool') return getQuestionsByIds(getActiveWrongIds());
-  if (pool === 'bookmarks') return getQuestionsByIds(getBookmarks());
-  if (wrongOf) return getQuestionsByIds(getWrongIds(wrongOf));
-  if (mode === 'session') return getQuestionsBySession(id);
-  if (mode === 'subject') {
-    if (sessionParam) return getQuestionsBySubjectAndSession(parseInt(id, 10), sessionParam);
-    return getQuestionsBySubject(parseInt(id, 10));
+/**
+ * loadExam, plus pinning for composed sets: the first load stores the composed ids under the exam key
+ * (src/lib/composed.ts); later loads of that key rebuild the run from those ids — relabelled with the
+ * 2027 subject like a fresh composition — instead of recomposing from changed stats. When none of the
+ * pinned ids exist anymore the fresh composition is used and pinned instead.
+ */
+async function loadPinnedExam(params: ExamParams): Promise<ExamLoadOutcome> {
+  const outcome = await loadExam(params);
+  if (outcome.kind !== 'ready' || !PINNED_KINDS.has(params.source.kind)) return outcome;
+  const { run } = outcome;
+  const pinnedIds = getComposedIds(run.examKey);
+  const pinned = pinnedIds ? (await loadQuestionsByIds(pinnedIds)).map(withCriteriaSubject) : [];
+  if (pinned.length === 0) {
+    saveComposedIds(run.examKey, run.items.map(item => item.original.id));
+    return outcome;
   }
-  return getAllQuestions();
+  saveComposedIds(run.examKey, pinned.map(q => q.id)); // a reused set counts as recent again
+  return { kind: 'ready', run: withQuestions(run, pinned, optionSeed(params.source)) };
 }
 
-export function useExamLoader(params: ExamLoaderParams): ExamLoaderResult {
-  const { mode, id, sessionParam, wrongOf, pool } = params;
-
-  const examKey = useMemo(
-    () => buildExamKey(params),
-    [mode, id, sessionParam, wrongOf, pool],
-  );
-
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [initialAnswers, setInitialAnswers] = useState<Record<string, number>>({});
-  const [initialRetryContext, setInitialRetryContext] = useState<RetryContext | null>(null);
+/**
+ * Turns the /exam query string into a ready run. Seeded pools without a seed get one
+ * pinned into the URL first (router.replace), and composed sets (mock / weak / topic) reuse
+ * the question list stored for their exam key, so a refresh reproduces the same set.
+ * `loading` is derived (no settled result for the current request yet), never set in the effect.
+ */
+export function useExamLoader(query: string): ExamLoaderState {
+  const router = useRouter();
+  const params = useMemo(() => parseExamParams(new URLSearchParams(query)), [query]);
+  const [attempt, setAttempt] = useState(0);
+  const [settled, setSettled] = useState<Settled | null>(null);
+  const pinnedForRef = useRef<string | null>(null);
+  const requestKey = `${query}#${attempt}`;
+  const missingSeed = needsSeed(params.source);
 
   useEffect(() => {
-    const loaded = loadQuestions(params);
-    setQuestions(loaded);
-    setInitialAnswers(getExamAnswers(examKey) ?? {});
-    setInitialRetryContext(wrongOf ? getRetryContext(wrongOf) ?? null : null);
-  }, [mode, id, sessionParam, wrongOf, pool, examKey]);
+    if (!missingSeed) {
+      pinnedForRef.current = null; // a later visit to a seedless URL gets a fresh seed
+      return;
+    }
+    if (pinnedForRef.current === query) return; // one replace per visit, also under StrictMode re-runs
+    pinnedForRef.current = query;
+    const next = new URLSearchParams(query);
+    next.set('seed', String(newSeed()));
+    router.replace(`/exam?${next.toString()}`, { scroll: false });
+  }, [missingSeed, query, router]);
 
-  return { questions, initialAnswers, initialRetryContext, examKey };
+  useEffect(() => {
+    if (missingSeed) return;
+    let cancelled = false;
+    loadPinnedExam(params)
+      .then(outcome => {
+        if (cancelled) return;
+        setSettled(
+          outcome.kind === 'ready'
+            ? { key: requestKey, kind: 'ready', run: outcome.run }
+            : { key: requestKey, kind: 'empty', reason: outcome.reason },
+        );
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) setSettled({ key: requestKey, kind: 'error', detail: describeError(err) });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [missingSeed, params, requestKey]);
+
+  if (!settled || settled.key !== requestKey) return { status: 'loading', params };
+  switch (settled.kind) {
+    case 'ready':
+      return { status: 'ready', params, loadId: requestKey, run: settled.run };
+    case 'empty':
+      return { status: 'empty', params, reason: settled.reason };
+    case 'error':
+      return { status: 'error', params, detail: settled.detail, reload: () => setAttempt(n => n + 1) };
+  }
 }

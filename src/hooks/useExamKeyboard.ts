@@ -4,35 +4,45 @@ import { useEffect } from 'react';
 
 export interface UseExamKeyboardArgs {
   active: boolean;
-  questionCount: number;
-  currentIndex: number;
+  /** false once the current answer is locked (확인/submitted) */
   acceptAnswerKeys: boolean;
-  setCurrentIndex: (updater: (prev: number) => number) => void;
-  onAnswerKey: (answer: number) => void;
+  optionCount: number;
+  onPrev: () => void;
+  onNext: () => void;
+  /** 1-based DISPLAY position (what the learner sees), not the original option number */
+  onAnswerKey: (displayOption: number) => void;
 }
 
+function isTypingTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  return target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
+}
+
+/** ←/↑ previous, →/↓ next, 1–9 pick the option at that screen position. */
 export function useExamKeyboard({
   active,
-  questionCount,
-  currentIndex,
   acceptAnswerKeys,
-  setCurrentIndex,
+  optionCount,
+  onPrev,
+  onNext,
   onAnswerKey,
 }: UseExamKeyboardArgs): void {
   useEffect(() => {
     if (!active) return;
     const handle = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing || isTypingTarget(e.target)) return;
       if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
         e.preventDefault();
-        setCurrentIndex(prev => Math.max(0, prev - 1));
+        onPrev();
       } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
         e.preventDefault();
-        setCurrentIndex(prev => Math.min(questionCount - 1, prev + 1));
-      } else if (acceptAnswerKeys && ['1', '2', '3', '4'].includes(e.key)) {
-        onAnswerKey(parseInt(e.key, 10));
+        onNext();
+      } else if (acceptAnswerKeys && /^[1-9]$/.test(e.key)) {
+        const option = Number(e.key);
+        if (option <= optionCount) onAnswerKey(option);
       }
     };
     window.addEventListener('keydown', handle);
     return () => window.removeEventListener('keydown', handle);
-  }, [active, questionCount, acceptAnswerKeys, setCurrentIndex, onAnswerKey, currentIndex]);
+  }, [active, acceptAnswerKeys, optionCount, onPrev, onNext, onAnswerKey]);
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 
 const STORAGE_KEY = 'bigdata-cbt-theme';
 type Theme = 'light' | 'dark';
@@ -18,14 +18,13 @@ function readTheme(): Theme {
   return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
-export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>('light');
-  const [mounted, setMounted] = useState(false);
+const noopSubscribe = () => () => {};
 
-  useEffect(() => {
-    setMounted(true);
-    setTheme(readTheme());
-  }, []);
+export default function ThemeToggle() {
+  // false while server-rendering/hydrating, true on the client — the placeholder below keeps the
+  // hydrated markup identical, so the stored theme can be read in a lazy initializer.
+  const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
+  const [theme, setTheme] = useState<Theme>(readTheme);
 
   const toggle = () => {
     const next: Theme = theme === 'dark' ? 'light' : 'dark';

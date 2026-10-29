@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 
 const PREF_KEY = 'bigdata-cbt-reminder';
 const LAST_FIRED_KEY = 'bigdata-cbt-reminder-last';
@@ -54,22 +54,23 @@ async function fireReminder(): Promise<void> {
   } catch { /* ignore */ }
 }
 
-export default function DailyReminder() {
-  const [mounted, setMounted] = useState(false);
-  const [pref, setPref] = useState<ReminderPref>({ enabled: false, hour: 20 });
-  const [permission, setPermission] = useState<NotificationPermission>('default');
-  const [supported, setSupported] = useState(true);
+function isSupported(): boolean {
+  return typeof window !== 'undefined' && 'Notification' in window && 'serviceWorker' in navigator;
+}
 
-  useEffect(() => {
-    setMounted(true);
-    if (typeof window === 'undefined') return;
-    if (!('Notification' in window) || !('serviceWorker' in navigator)) {
-      setSupported(false);
-      return;
-    }
-    setPref(loadPref());
-    setPermission(Notification.permission);
-  }, []);
+function readPermission(): NotificationPermission {
+  return isSupported() ? Notification.permission : 'default';
+}
+
+const noopSubscribe = () => () => {};
+
+export default function DailyReminder() {
+  // false while server-rendering/hydrating, true on the client — so storage-backed state can be
+  // read in lazy initializers without a hydration mismatch (and without setState in an effect).
+  const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
+  const [supported] = useState(isSupported);
+  const [pref, setPref] = useState<ReminderPref>(loadPref);
+  const [permission, setPermission] = useState<NotificationPermission>(readPermission);
 
   // Check every minute whether it's time to fire today's reminder
   useEffect(() => {

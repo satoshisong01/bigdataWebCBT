@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import { StreakData } from '@/lib/storage';
+import { liveStreak } from '@/components/home/homeLogic';
 
 interface StreakBadgeProps {
   streak: StreakData;
@@ -19,7 +20,7 @@ function dateKey(d: Date): string {
 export default function StreakBadge({ streak }: StreakBadgeProps) {
   const studied = useMemo(() => new Set(streak.days), [streak.days]);
 
-  const cells = useMemo(() => {
+  const { cells, current } = useMemo(() => {
     const arr: Array<{ key: string; label: string; isStudied: boolean; isToday: boolean }> = [];
     const today = new Date();
     const todayKey = dateKey(today);
@@ -34,7 +35,8 @@ export default function StreakBadge({ streak }: StreakBadgeProps) {
         isToday: k === todayKey,
       });
     }
-    return arr;
+    // streak.current is only updated on study days, so it goes stale after a missed day.
+    return { cells: arr, current: liveStreak(Array.from(studied), todayKey) };
   }, [studied]);
 
   if (streak.days.length === 0) return null;
@@ -48,11 +50,11 @@ export default function StreakBadge({ streak }: StreakBadgeProps) {
         <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm">
           <div>
             <span className="text-gray-500 dark:text-slate-400">현재</span>{' '}
-            <span className="font-bold text-orange-500">🔥 {streak.current}일</span>
+            <span className="font-bold text-orange-500">🔥 {current}일</span>
           </div>
           <div>
             <span className="text-gray-500 dark:text-slate-400">최고</span>{' '}
-            <span className="font-bold text-blue-600">{streak.best}일</span>
+            <span className="font-bold text-blue-600 dark:text-blue-400">{streak.best}일</span>
           </div>
         </div>
       </div>
@@ -68,7 +70,7 @@ export default function StreakBadge({ streak }: StreakBadgeProps) {
                   ? 'bg-orange-500 text-white'
                   : 'bg-green-500 text-white'
                 : cell.isToday
-                  ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 border border-orange-300'
+                  ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 border border-orange-300 dark:border-orange-700'
                   : 'bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-600'
             }`}
           >
@@ -78,7 +80,7 @@ export default function StreakBadge({ streak }: StreakBadgeProps) {
       </div>
 
       <div className="text-[10px] sm:text-xs text-gray-400 dark:text-slate-500 mt-2 sm:mt-3">
-        최근 {CELLS}일 · 시험 제출 시 자동 기록
+        최근 {CELLS}일 · 문제 풀이·개념 카드·계산 드릴을 하면 자동 기록
       </div>
     </section>
   );

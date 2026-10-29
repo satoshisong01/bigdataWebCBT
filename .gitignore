@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# tool logs/state dumps may contain command lines with secrets — never commit them
+.bkit/audit/
+.bkit/runtime/
+.bkit/snapshots/
+.bkit/checkpoints/
