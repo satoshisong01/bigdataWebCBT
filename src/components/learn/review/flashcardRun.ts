@@ -2,7 +2,7 @@
 import { nextSrs, type Grade, type SrsState } from '@/lib/srs';
 import { diffDays } from '@/lib/date';
 
-export const FLASH_GRADES: readonly Grade[] = ['again', 'hard', 'good', 'easy'];
+export const FLASH_GRADES: readonly Grade[] = ['easy', 'good', 'hard', 'again'];
 
 export interface FlashRun {
   index: number;

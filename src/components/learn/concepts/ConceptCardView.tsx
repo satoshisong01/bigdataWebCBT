@@ -12,7 +12,7 @@ import { formatDayShort, formatDue } from '../format';
 import { conceptsHref } from '../links';
 import { BTN_GHOST, CARD, LINK, MUTED } from '../ui';
 
-const CARD_GRADES: readonly Grade[] = ['again', 'hard', 'good'];
+const CARD_GRADES: readonly Grade[] = ['good', 'hard', 'again'];
 
 const RECORDED: Readonly<Record<Grade, string>> = {
   again: '모름으로',
@@ -30,7 +30,7 @@ interface ConceptCardViewProps {
   showTopic?: boolean;
 }
 
-/** A concept card with 모름/애매/앎 self-grading; after grading the buttons fold away to avoid double taps. */
+/** A concept card with 앎/애매/모름 self-grading; after grading the buttons fold away to avoid double taps. */
 export default function ConceptCardView({ card, stat, today, onGrade, showTopic = false }: ConceptCardViewProps) {
   const [graded, setGraded] = useState<Grade | null>(null);
   const nextReview = stat ? `${formatDue(today, stat.srs.due)}(${formatDayShort(stat.srs.due)})` : null;

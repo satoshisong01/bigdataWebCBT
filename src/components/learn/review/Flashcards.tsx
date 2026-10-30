@@ -23,7 +23,7 @@ interface FlashcardsProps {
   onDone: () => void;
 }
 
-/** Front (term) → tap / Space → back (summary·points) → 모름/애매/앎/쉬움 (keys 1–4) → next card. */
+/** Front (term) → tap / Space → back (summary·points) → 쉬움/앎/애매/모름 (keys 1–4) → next card. */
 export default function Flashcards({ cards, cstats, today, onGrade, onDone }: FlashcardsProps) {
   const [run, setRun] = useState<FlashRun>(START_FLASH);
   const [stopped, setStopped] = useState(false);
@@ -70,7 +70,7 @@ export default function Flashcards({ cards, cstats, today, onGrade, onDone }: Fl
           그만하기
         </button>
         <p className="hidden sm:block text-xs text-gray-400 dark:text-slate-500">
-          {run.flipped ? '1 모름 · 2 애매 · 3 앎 · 4 쉬움' : 'Space 뒤집기'}
+          {run.flipped ? '1 쉬움 · 2 앎 · 3 애매 · 4 모름' : 'Space 뒤집기'}
         </p>
       </div>
     </div>

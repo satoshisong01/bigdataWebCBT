@@ -57,7 +57,7 @@ export default function SubChecklist({ studied }: SubChecklistProps) {
         </span>
       </div>
       <p className="text-xs text-gray-500 dark:text-slate-400 mb-2">
-        세부항목의 세세항목을 모두 학습하면 체크돼요. 세세항목은 개념 카드를 절반 이상 학습(모름·애매·앎 표시, 용어 퀴즈,
+        세부항목의 세세항목을 모두 학습하면 체크돼요. 세세항목은 개념 카드를 절반 이상 학습(앎·애매·모름 표시, 용어 퀴즈,
         복습 포함)하면, 카드가 없는 항목은 관련 문제를 2개 이상 풀면 학습한 것으로 봐요. 1단계가 끝나기 전에 모두 체크하는 것이
         목표예요.
       </p>

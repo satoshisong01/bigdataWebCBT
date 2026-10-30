@@ -197,7 +197,7 @@ describe('/review', () => {
 
     await press(' ');
     expect(text()).toContain('규모·다양성·속도로 정의한다.');
-    await press('1');
+    await press('4');
     expect(gradeCard).toHaveBeenLastCalledWith('c1', 'again');
     expect(text()).toContain('남은 카드 1장');
 
