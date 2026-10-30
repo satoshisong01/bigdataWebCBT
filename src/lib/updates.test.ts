@@ -1,31 +1,44 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { SITE_UPDATES, type SiteUpdate } from '@/data/updates';
 import { isDayKey } from '@/lib/date';
-import { getSeenUpdateId, markUpdatesSeen, unseenUpdateIds, UPDATES_SEEN_KEY } from './updates';
+import { buildFeed, getSeenIds, markSeen, unseenIds, UPDATES_SEEN_KEY, type OfficialNotice } from './updates';
 
-const u = (id: string, date: string): SiteUpdate => ({ id, date, title: id, items: ['x'] });
-const LIST = [u('c', '2027-01-15'), u('b', '2027-01-01'), u('a', '2026-12-15')];
+const site = (id: string, date: string): SiteUpdate => ({ id, date, title: id, items: ['x'] });
+const notice = (id: string, date: string): OfficialNotice => ({ id, date, title: id, summary: '', url: 'https://www.dataq.or.kr/x' });
 
-describe('unseenUpdateIds', () => {
-  it('counts everything when nothing was seen', () => {
-    expect(unseenUpdateIds(LIST, null)).toEqual(['c', 'b', 'a']);
-  });
-  it('counts only updates newer than the seen one', () => {
-    expect(unseenUpdateIds(LIST, 'b')).toEqual(['c']);
-    expect(unseenUpdateIds(LIST, 'c')).toEqual([]);
-  });
-  it('treats an unknown seen id as nothing seen', () => {
-    expect(unseenUpdateIds(LIST, 'gone')).toEqual(['c', 'b', 'a']);
+describe('buildFeed', () => {
+  it('merges site updates and official notices newest first', () => {
+    const feed = buildFeed([site('s1', '2026-10-30')], [notice('n1', '2026-11-02'), notice('n0', '2026-09-11')]);
+    expect(feed.map(f => [f.id, f.kind])).toEqual([['n1', 'official'], ['s1', 'site'], ['n0', 'official']]);
   });
 });
 
-describe('seen marker', () => {
+describe('unseenIds', () => {
+  const feed = buildFeed([site('s1', '2026-10-30')], [notice('n1', '2026-11-02'), notice('old', '2026-06-01')]);
+  it('counts recent unseen items only', () => {
+    expect(unseenIds(feed, new Set(), '2026-11-03')).toEqual(['n1', 's1']);
+    expect(unseenIds(feed, new Set(['s1']), '2026-11-03')).toEqual(['n1']);
+  });
+  it('ignores items older than the window even when unseen', () => {
+    expect(unseenIds(feed, new Set(), '2027-03-01')).toEqual([]);
+  });
+});
+
+describe('seen ids', () => {
   beforeEach(() => localStorage.clear());
-  it('stores the newest id', () => {
-    expect(getSeenUpdateId()).toBeNull();
-    markUpdatesSeen(LIST);
-    expect(localStorage.getItem(UPDATES_SEEN_KEY)).toBe('c');
-    expect(unseenUpdateIds(LIST, getSeenUpdateId())).toEqual([]);
+  it('accumulates ids across opens', () => {
+    expect(getSeenIds().size).toBe(0);
+    markSeen(['a', 'b']);
+    markSeen(['c']);
+    expect([...getSeenIds()].sort()).toEqual(['a', 'b', 'c']);
+  });
+  it('reads the first release format (a single id string)', () => {
+    localStorage.setItem(UPDATES_SEEN_KEY, '2026-10-30-overhaul');
+    expect(getSeenIds().has('2026-10-30-overhaul')).toBe(true);
+  });
+  it('survives corrupt storage', () => {
+    localStorage.setItem(UPDATES_SEEN_KEY, '[not json');
+    expect(getSeenIds().size).toBe(0);
   });
 });
 

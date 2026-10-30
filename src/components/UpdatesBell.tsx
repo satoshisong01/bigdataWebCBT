@@ -2,24 +2,57 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { SITE_UPDATES } from '@/data/updates';
-import { getSeenUpdateId, markUpdatesSeen, unseenUpdateIds } from '@/lib/updates';
+import { todayKey } from '@/lib/date';
+import type { ApiResult } from '@/lib/sync/protocol';
+import {
+  buildFeed,
+  getSeenIds,
+  markSeen,
+  NOTICES_API,
+  unseenIds,
+  type FeedItem,
+  type OfficialNotice,
+} from '@/lib/updates';
 
 const noopSubscribe = () => () => {};
 
-function readUnseen(): string[] {
-  if (typeof window === 'undefined') return [];
-  return unseenUpdateIds(SITE_UPDATES, getSeenUpdateId());
+function readSeen(): ReadonlySet<string> {
+  return typeof window === 'undefined' ? new Set() : getSeenIds();
 }
 
-/** 🔔 with an unread badge; opening the panel lists 업데이트 내역 (newest first) and marks them read on this device. */
+type NoticeState = 'loading' | 'ok' | 'error';
+
+/**
+ * 🔔 with an unread badge. The panel merges 사이트 업데이트 (src/data/updates.ts) with official
+ * 데이터자격검정 notices (/api/notices), newest first; opening it marks everything read on this device.
+ */
 export default function UpdatesBell() {
   // Same hydration guard as ThemeToggle: placeholder until mounted, so localStorage can be read in a lazy initializer.
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
-  const [unseen, setUnseen] = useState<string[]>(readUnseen);
+  const [seen, setSeen] = useState<ReadonlySet<string>>(readSeen);
+  const [notices, setNotices] = useState<OfficialNotice[]>([]);
+  const [noticeState, setNoticeState] = useState<NoticeState>('loading');
   const [open, setOpen] = useState(false);
   // ids that were unread when the panel was opened — highlighted as NEW while it stays open
   const [fresh, setFresh] = useState<string[]>([]);
   const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let alive = true;
+    fetch(NOTICES_API)
+      .then(r => r.json() as Promise<ApiResult<OfficialNotice[]>>)
+      .then(res => {
+        if (!alive) return;
+        if (res.ok) setNotices(res.data);
+        setNoticeState(res.ok ? 'ok' : 'error');
+      })
+      .catch(() => {
+        if (alive) setNoticeState('error');
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -41,11 +74,15 @@ export default function UpdatesBell() {
     return <div className="w-9 h-9" aria-hidden />;
   }
 
+  const feed = buildFeed(SITE_UPDATES, notices);
+  const unseen = unseenIds(feed, seen, todayKey());
+
   const toggle = () => {
     if (!open) {
+      const ids = feed.map(f => f.id);
       setFresh(unseen);
-      setUnseen([]);
-      markUpdatesSeen(SITE_UPDATES);
+      setSeen(new Set([...seen, ...ids]));
+      markSeen(ids);
     }
     setOpen(!open);
   };
@@ -78,34 +115,66 @@ export default function UpdatesBell() {
           <p className="sticky top-0 px-4 py-3 border-b border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-bold text-gray-900 dark:text-slate-100">
             업데이트 내역
           </p>
-          {SITE_UPDATES.length === 0 ? (
-            <p className="px-4 py-6 text-sm text-gray-500 dark:text-slate-400">아직 업데이트 소식이 없어요.</p>
-          ) : (
-            <ol className="divide-y divide-gray-100 dark:divide-slate-800">
-              {SITE_UPDATES.map(u => (
-                <li key={u.id} className="px-4 py-3 space-y-1.5">
-                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <time dateTime={u.date} className="text-xs text-gray-500 dark:text-slate-400">
-                      {u.date.replaceAll('-', '.')}
-                    </time>
-                    {fresh.includes(u.id) && (
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400">
-                        NEW
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm font-bold text-gray-900 dark:text-slate-100">{u.title}</p>
-                  <ul className="list-disc pl-5 space-y-1 text-[13px] leading-relaxed text-gray-700 dark:text-slate-300">
-                    {u.items.map((item, i) => (
-                      <li key={i}>{item}</li>
-                    ))}
-                  </ul>
-                </li>
-              ))}
-            </ol>
-          )}
+          <ol className="divide-y divide-gray-100 dark:divide-slate-800">
+            {feed.map(item => (
+              <FeedRow key={item.id} item={item} isNew={fresh.includes(item.id)} />
+            ))}
+          </ol>
+          <p className="px-4 py-3 border-t border-gray-100 dark:border-slate-800 text-[11px] leading-relaxed text-gray-500 dark:text-slate-400">
+            {noticeState === 'error'
+              ? '공식 공지를 지금은 불러오지 못했어요. 잠시 후 다시 열어 보세요.'
+              : '공식 공지는 데이터자격검정(dataq.or.kr) 공지사항에서 빅데이터분석기사 관련 글만 자동으로 가져와요.'}
+          </p>
         </div>
       )}
     </div>
+  );
+}
+
+function FeedRow({ item, isNew }: { item: FeedItem; isNew: boolean }) {
+  return (
+    <li className="px-4 py-3 space-y-1.5">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+        <time dateTime={item.date} className="text-xs text-gray-500 dark:text-slate-400">
+          {item.date.replaceAll('-', '.')}
+        </time>
+        <span
+          className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+            item.kind === 'official'
+              ? 'bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400'
+              : 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400'
+          }`}
+        >
+          {item.kind === 'official' ? '공식 공지' : '사이트 업데이트'}
+        </span>
+        {isNew && (
+          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400">
+            NEW
+          </span>
+        )}
+      </div>
+      <p className="text-sm font-bold text-gray-900 dark:text-slate-100">{item.title}</p>
+      {item.kind === 'site' ? (
+        <ul className="list-disc pl-5 space-y-1 text-[13px] leading-relaxed text-gray-700 dark:text-slate-300">
+          {item.items.map((line, i) => (
+            <li key={i}>{line}</li>
+          ))}
+        </ul>
+      ) : (
+        <>
+          {item.summary && (
+            <p className="text-[13px] leading-relaxed text-gray-700 dark:text-slate-300">{item.summary}</p>
+          )}
+          <a
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            원문 보기 ↗
+          </a>
+        </>
+      )}
+    </li>
   );
 }
